@@ -1,0 +1,128 @@
+@import 'tailwindcss';
+
+/*
+  Valerie design tokens.
+  Values come from the Valerie Shadcn DS Figma library ("Shadcn (customised)" and
+  "Colors custom" collections). Change colours here only, never as hex in components.
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #64748b;
+  --primary: #1e293b;
+  --primary-foreground: #f8fafc;
+  --surface-header: #f1f5f9; /* dashboard header strip */
+  --sidebar: #0f172a; /* dashboard sidebar (slate/900) */
+
+  /* Brand secondary (navy) */
+  --brand-50: #eff7ff;
+  --brand-100: #dbeafe;
+  --brand-200: #bfdafe;
+  --brand-300: #93b6fd;
+  --brand-400: #6084fa;
+  --brand-500: #3b60f6;
+  --brand-600: #2546eb;
+  --brand-700: #1d2dd8;
+  --brand-800: #1e2aaf;
+  --brand-900: #1e278a;
+  --brand-950: #171c54;
+  --brand-accent: #ea9f43; /* amber, logo only */
+
+  /* Data colours used by the dashboard chart cards */
+  --data-up: #059669;
+  --data-down: #c2410c;
+  --data-bespoke: #9333ea;
+  --data-leader: #3b60f6;
+}
+
+.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
+  --card: #0f172a;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --input: #334155;
+  --ring: #94a3b8;
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+  --surface-header: #0f172a;
+  --data-bespoke: #c084fc;
+}
+
+@theme inline {
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-surface-header: var(--surface-header);
+  --color-sidebar: var(--sidebar);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+  --color-brand-accent: var(--brand-accent);
+
+  --color-data-up: var(--data-up);
+  --color-data-down: var(--data-down);
+  --color-data-bespoke: var(--data-bespoke);
+  --color-data-leader: var(--data-leader);
+
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-breathe: breathe 4.4s ease-in-out infinite;
+  --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes shimmer {
+  from { background-position: -400px 0; }
+  to { background-position: 400px 0; }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  html, body, #root { height: 100%; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { cursor: pointer; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--muted) 0%, color-mix(in srgb, var(--muted) 55%, var(--background)) 50%, var(--muted) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s linear infinite;
+}
