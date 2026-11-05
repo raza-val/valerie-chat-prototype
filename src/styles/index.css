@@ -40,6 +40,28 @@
   --data-down: #c2410c;
   --data-bespoke: #9333ea;
   --data-leader: #3b60f6;
+  /* The answer in chat, from the Figma answer designs (AI-chat-screen, "Output" 119:41560) */
+  --chart-card: #f8fafc; /* Market Briefing card ground (slate/50) */
+  --ink-soft: #334155; /* card subtitle and notes (slate/700) */
+  --data-up-ink: #047857; /* a positive figure in a table (emerald/700) */
+  --data-bespoke-ink: #7e22ce; /* Bespoke's name and figures in a table (purple/700) */
+  --chart-card-shadow: 0 2px 8px 0 rgb(203 213 225 / 0.5), 0 1px 1px 0 rgb(148 163 184 / 0.2), inset 0 2px 6px 0 rgb(226 232 240 / 0.6); /* D20 the Market Briefing card's own shadow, from Figma */
+  --ink-faint: #94a3b8; /* a unit after a figure, "(share /year)" (slate/400) */
+  /* Verdict badges ("Badge-custom", What Bespoke leaves out 119:41805): a top-to-bottom wash, a hairline, ink */
+  --badge-up-from: #ecfdf5; /* emerald/50 */
+  --badge-up-to: #d1fae5; /* emerald/100 */
+  --badge-up-border: #a7f3d0; /* emerald/200; ink is --data-up-ink */
+  --badge-warn-from: #fefce8; /* yellow/50 */
+  --badge-warn-to: #fef9c3; /* yellow/100 */
+  --badge-warn-border: #fef08a; /* yellow/200 */
+  --badge-warn-ink: #713f12; /* yellow/900 */
+
+  /* ── Beyond the DS: every value here is a row in docs/DS-DEVIATIONS.md ── */
+  --canvas: var(--muted); /* D11 the calm page ground */
+  --surface: var(--card); /* D12 white means "you can touch this" */
+  --aura-tint: var(--brand-400); /* D1 Aura's metal */
+  --muted-ink: color-mix(in srgb, var(--muted-foreground) 85%, var(--foreground)); /* D16 grey text that passes AA on the canvas */
+  /* ── End beyond the DS ── */
 }
 
 .dark {
@@ -55,10 +77,28 @@
   --primary-foreground: #0f172a;
   --surface-header: #0f172a;
   --data-bespoke: #c084fc;
+  --chart-card: #0f172a;
+  --ink-soft: #cbd5e1;
+  --data-up-ink: #34d399;
+  --data-bespoke-ink: #d8b4fe;
+  --chart-card-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.4); /* D20 in dark, a light inner glow reads as a bright rim */
+  --ink-faint: #64748b;
+  --badge-up-from: #022c22;
+  --badge-up-to: #064e3b;
+  --badge-up-border: #065f46;
+  --badge-warn-from: #422006;
+  --badge-warn-to: #713f12;
+  --badge-warn-border: #854d0e;
+  --badge-warn-ink: #fde047;
+
+  /* ── Beyond the DS ── */
+  --canvas: var(--background);
+  --aura-tint: var(--brand-200);
+  /* ── End beyond the DS ── */
 }
 
 @theme inline {
-  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'DM Sans Variable', 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -90,24 +130,87 @@
   --color-data-down: var(--data-down);
   --color-data-bespoke: var(--data-bespoke);
   --color-data-leader: var(--data-leader);
+  --color-chart-card: var(--chart-card);
+  --color-ink-soft: var(--ink-soft);
+  --color-data-up-ink: var(--data-up-ink);
+  --color-data-bespoke-ink: var(--data-bespoke-ink);
+  --color-ink-faint: var(--ink-faint);
+  --color-badge-up-from: var(--badge-up-from);
+  --color-badge-up-to: var(--badge-up-to);
+  --color-badge-up-border: var(--badge-up-border);
+  --color-badge-warn-from: var(--badge-warn-from);
+  --color-badge-warn-to: var(--badge-warn-to);
+  --color-badge-warn-border: var(--badge-warn-border);
+  --color-badge-warn-ink: var(--badge-warn-ink);
+
+  /* ── Beyond the DS ── */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --shadow-hairline: 0 1px 2px rgb(15 23 42 / 0.05); /* D4 */
+  --shadow-float: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -10px rgb(15 23 42 / 0.14); /* D5 */
+  --shadow-chart-card: var(--chart-card-shadow); /* D20 */
+  --shadow-composer: 0 1px 2px rgb(15 23 42 / 0.06), 0 4px 12px -2px rgb(15 23 42 / 0.06), 0 16px 32px -12px rgb(15 23 42 / 0.18); /* D19 */
+  /* ── End beyond the DS ── */
 
   --animate-shimmer: shimmer 1.6s linear infinite;
   --animate-breathe: breathe 4.4s ease-in-out infinite;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-pop: pop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-reveal: reveal 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-tick: tick 0.28s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  --animate-wave: wave 1.8s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  /* Aura's morph (MORPH_MS in src/lib/aura.ts): the outgoing shape melts outward, the incoming one gathers in */
+  --animate-melt: melt 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-form: form 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes tick {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes wave {
+  from { opacity: 0.55; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.75); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
 
 @keyframes shimmer {
   from { background-position: -400px 0; }
   to { background-position: 400px 0; }
 }
+@keyframes shimmer-line {
+  from { background-position: -400px 50%; }
+  to { background-position: 400px 50%; }
+}
 @keyframes breathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.03); }
+}
+@keyframes melt {
+  to { opacity: 0; transform: scale(1.14); filter: blur(4px); }
+}
+@keyframes form {
+  from { opacity: 0; transform: scale(0.82); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
 }
 @keyframes rise {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
 }
+
+/* D16: on the canvas, grey text is nudged toward ink (5.3:1 instead of 4.3:1 against --canvas). */
+[data-canvas] { --muted-foreground: var(--muted-ink); }
 
 @layer base {
   * { border-color: var(--border); }
@@ -119,10 +222,37 @@
     -webkit-font-smoothing: antialiased;
   }
   button { cursor: pointer; }
+  * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 }
 
+/* Drawn in the border tone so it reads on both the canvas and white surfaces. */
 .skeleton {
-  background: linear-gradient(90deg, var(--muted) 0%, color-mix(in srgb, var(--muted) 55%, var(--background)) 50%, var(--muted) 100%);
+  background: linear-gradient(90deg, var(--border) 0%, color-mix(in srgb, var(--border) 40%, var(--surface)) 50%, var(--border) 100%);
   background-size: 800px 100%;
   animation: shimmer 1.6s linear infinite;
 }
+
+/* Words still to come: the real text laid out unseen, each line drawn as a shimmer bar as long as the line (the
+   background repeats per line fragment), a little thinner than the type, so a skeleton has its text's exact shape. */
+.skeleton-text {
+  color: transparent;
+  background: linear-gradient(90deg, var(--border) 0%, color-mix(in srgb, var(--border) 40%, var(--surface)) 50%, var(--border) 100%) 0 50% / 800px 64% repeat-x;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: shimmer-line 1.6s linear infinite;
+}
+
+/* Text that's still being worked on (Version B's step line while Valerie works): dark text with a glare, a light band
+   sweeping across it quickly, then a short rest. No colour: the band is the text colour faded toward the canvas
+   (light on light, dark on dark). The gradient is 2.5× the text's width, so 100% → 0% carries the band from just
+   before the first letter to just past the last: the whole 1s sweep is on the words. */
+.glare-text {
+  --glare-band: color-mix(in srgb, var(--foreground) 28%, var(--canvas));
+  background: linear-gradient(105deg, var(--foreground) 40%, var(--glare-band) 50%, var(--foreground) 60%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-glare 1.6s ease-in-out infinite;
+}
+@keyframes text-glare { 0% { background-position: 100% 0; } 62%, 100% { background-position: 0% 0; } }

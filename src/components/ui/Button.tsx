@@ -5,10 +5,10 @@ type Variant = 'outline' | 'ghost' | 'primary' | 'chip'
 type Size = 'sm' | 'md' | 'icon'
 
 const variants: Record<Variant, string> = {
-  outline: 'border border-border bg-background text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:bg-muted',
-  ghost: 'text-muted-foreground hover:bg-muted hover:text-foreground',
-  primary: 'bg-brand-950 text-white hover:bg-brand-900 dark:bg-brand-500 dark:hover:bg-brand-400',
-  chip: 'rounded-full border border-border bg-background text-foreground hover:border-brand-300 hover:bg-brand-50 dark:hover:bg-muted',
+  outline: 'border border-border bg-background text-foreground shadow-hairline hover:bg-muted',
+  ghost: 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground',
+  primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+  chip: 'rounded-full bg-surface text-foreground shadow-hairline transition-shadow hover:shadow-float',
 }
 const sizes: Record<Size, string> = {
   sm: 'h-8 gap-1.5 px-3 text-sm font-semibold',

@@ -5,26 +5,103 @@ This is a clickable prototype of **Valerie**, an AI analyst chat for the skincar
 ## Hard rules
 
 1. **Keep the chat free of navigation chrome.** In production it sits inside the Valerie dashboard, which already has a dark sidebar and a breadcrumb header, and it may ship later as a standalone agent.
-   - The chat only owns its own row: title, New chat, View traces, Chats.
+   - The chat owns no bar: its controls float as white pills in its top-right corner: one capsule for Chats and New chat (+) first, then sound and View traces as round icons (named in a tooltip on hover). No visible chat title: the first question already names the chat.
    - `AppShell` only *simulates* the host (`?shell=dashboard`).
-2. **Use colours only from the tokens** in `src/styles/index.css`. These are the Valerie DS: slate neutrals plus the `brand-*` navy scale. Amber `brand-accent` is used only in the logo. Never hard-code a hex in a component, except the chart series colours that live in `src/data/charts`.
+2. **Use colours only from the tokens** in `src/styles/index.css`. These are the Valerie DS: slate neutrals plus the `brand-*` navy scale. Amber `brand-accent` is used only in the logo. Never hard-code a hex in a component, except the chart series colours that live in `src/data/charts`. Anything beyond the DS sits in the fenced "Beyond the DS" blocks of `index.css` (or `src/lib/aura.ts`) and gets a row in `docs/DS-DEVIATIONS.md` first.
+   - **Calm canvas.** Home and Chat sit on `--canvas` (grey); white (`--surface`) means "you can touch this" or a card. No borders where tone will do, one filled button per screen.
 3. **Use DM Sans only.** Never use monospace, including in traces.
-4. **Don't redesign the chart cards.** They mirror existing dashboard cards. Change their data or their width, not their look.
+4. **Answers follow the Figma answer designs exactly** (AI-chat-screen, "Output" 119:41560, R1–R4 and R6; 27 Oct). They are the reference another developer builds from: copy their cards, type and spacing, take no other inspiration. Chart cards are Figma's "Market Briefing Card" (`charts/ChartCard.tsx`): slate/50 ground, 24px corners and padding, a title (and subtitle), a white slot inside. Two exceptions the user chose: no eyebrow and no card buttons (Deep, pin, explain, About this card), and the answer ends the prototype's own quiet way (items 5–7), not Figma's footnote, lens tag, View trace / Regenerate / Pin insight row and offer bubble. Figma's figures are swapped for the prototype's illustrative ones (docs/DATA.md); its wording is kept word for word.
 5. **Don't invent copy.** Every visible word comes from the live product or `src/data`. Avoid helper text or filler labels.
-6. **Keep text and numbers in `src/data`.** If a number changes in an answer (`prompts.ts`), change it in the matching chart file too, and log it in `docs/DATA.md`.
-7. **Desktop first, at 1440 wide.** The text column is 720px, and charts break out to 960px.
+6. **Keep text and numbers in `src/data`.** If a number changes in an answer (`answers.ts`), change it in the matching chart file too, and log it in `docs/DATA.md`.
+7. **Desktop first, at 1440 wide.** Everything in the thread, charts included, sits in the 720px text column. Nothing is wider than the text, except the composer: 756px with the same 10px padding on all four sides (the buttons sit as far from the left and right edges as from the top and bottom), which puts the + glyph and the typed text on the text's left edge and the send arrow on its right edge (Claude and ChatGPT do the same). Any box with buttons inside gets equal padding on every side.
 
 ## Answer anatomy (`components/chat/AnswerView.tsx`)
 
+A chat is a thread of turns (`components/chat/Turn.tsx`), and each turn follows this order:
+
 1. The user's question.
-2. A header: Aura orb, "Valerie", the time taken, and a steps pill that expands to the step list.
-3. The lead, shown as the headline.
-4. The body.
-5. The chart.
-6. The source row: lens badge and footnote.
-7. Icon actions: copy, up, down, regenerate.
-8. The follow-up offer and chips.
-9. The docked composer.
+2. A header: Aura (a rounded hexagon in liquid chrome with eyes that blink and follow the pointer; the chrome churns and the eyes look up while thinking; it swells with the voice while speaking; a still once settled; grey, worried, with a red dot on error; tap it to hear the headline), then, right beside it, what Valerie did ("Read Bespoke reviews across 17 purchase drivers in 4 steps ⌄"), which expands to the step list. No name label and no time taken: Aura already says who is speaking, and a seconds count tells the reader nothing.
+3. The answer text: the lead is the headline, 20px semibold on a 28px line (the user asked for it bigger than Figma's 16px so it stands out); the paragraphs 16px on a 24px line, a blank line (24px) between them; a few paragraphs open with a bold run ("One caveat:"). Live, the lead's words stream in, in ink. Only with sound on is it laid out in grey first, each word turning to ink as Aura reads it aloud (recorded voice, `public/voice/`). Aura swells once per clause.
+4. The chart card, when the answer has one (`chart` in `prompts.ts`), in the 720px column.
+5. Icon actions only: copy, up, down, regenerate. No lens tag, no View trace or Pin insight under the answer.
+6. The follow-up offer (small, muted) and its chips, under the latest turn only.
+7. The method footnote lives in the expanded steps list with "Open full trace", not under the answer.
+8. The answer text and the card are 12px apart, as in Figma.
+9. (The header, item 2, is this prototype's own and not from the Figma answer designs.)
+10. The docked composer, shared by the whole thread: one thin row like the modern assistants (+, the text, the model, mic, send; no persona picker: Milo or Brie is chosen on Home only, and a chat keeps the persona it started with). The model picker (`ModelPicker.tsx`, names DRAFT in `ui.ts` `modelCopy`; every model gives the same answers) sits in the composer on Home (right, by the mic; the persona sits left, beside the +) and in the thread, where switching it mid-chat adds a "Now answering with …" divider like the persona's, 56px tall with 16px corners and 8px buttons (squarer than a pill, like Claude), 756px wide, 10px padding on every side, with a hairline and its own shadow (D19) so it never reads as one of the thread's cards. Once the text wraps it opens into two rows (the text full width on top, the controls under it) and grows to six lines; it closes again when sent or cleared. No fade above it, and none under the header: the thread stays readable right up to the composer and slips behind it; only the strip under the composer is solid. Home uses the two-row version from the start, with the starters frame flush under it at 756 and every left edge (placeholder, +, tab icons, questions) on one line.
+
+A live answer streams its lead word by word, then brings the body and chart in order. Answers frozen with `?state=` or preloaded with `?turns=` appear at once. The README lists every shareable state URL.
+
+## Versions
+
+Leadership compares four versions, **v1–v4**, each a whole prototype under its own prefix (the router's basename: `VERSION`, `AURA_FORM`, `ABSTRACT` in `src/lib/aura.ts`). The answers and the answer page are the same in all of them; only Aura and the Home layout differ. Build every change for all and check all.
+
+| URL | Aura | Home | While working |
+|---|---|---|---|
+| `/v1/…` | **Solid acrylic** (from `/exp/bot`: the mark as two thick pieces of clear blue acrylic, 3D; `exp/bot/Solid.tsx`, three.js, loaded only in v1) | v4's question cards under the composer, two to a row | the abstract flow (B below) |
+| `/v2/…` | **Constellation** (old `/constellation/…` links forward here) | lens tabs, full questions | the abstract flow |
+| `/v3/…` | **Mark orb** (Figma "Orb" 122:36999: the white mark on a navy sphere; `exp/MarkOrb.tsx`; v1 until 28 Oct) | the same cards under the composer | the abstract flow |
+| `/v4/…` | **Hologram** (from `/exp`) | questions beside the composer | the abstract flow |
+
+Renumbered on 28 Oct, when the original (A, the liquid-chrome hexagon at `/`) was dropped: `/` and any other link outside a version (except `/versions`, `/exp`, `/lab`) now lands in v1 (`src/lib/aura.ts`). A's code is still there (version `'a'` is only the tool pages now) and its notes below are history. The first v3 (the Orb, card-grid Home) was rejected on 28 Oct and removed. Later that day the user made Solid acrylic v1 and moved the Mark orb (v1 until then, Home and all) to v3. v4, the Hologram, was the preferred direction; Solid acrylic came out of the experiments that followed.
+
+The Valerie logo (top left, `AppShell`) opens **`/versions`**: one card per version, each with its Aura live (thinking on hover), plus a link to `/exp`. Its strings are DRAFT in `ui.ts` (`versionsCopy`). Links there are plain `<a href>`, not router links: a version's basename is read once at load.
+
+**No version has voice** (28 Oct, `VOICE` in `src/lib/aura.ts`): no sound pill, no cues, `?sound=1` is ignored, no audio is fetched; the lead streams in ink. On Home, tapping Aura still plays the greeting, silently (`playSilent` in `src/lib/voice.ts`): the headline inks word by word and Aura moves on the recording's timing and loudness (tooltip "Replay greeting", DRAFT). In the thread, tapping Aura does nothing.
+
+v2's Home rows (the Constellation) show each starter's full question, not its short title (the rows run the composer's width, so there's room), and breathe more: 44px rows, 4px apart. Below, "B" is the abstract flow v1, v2 and v4 share (no face, the about 20s (19–21s) wait, the shimmering step line); the 13/77-point drawings and the `tether` are the Constellation's own (v2). The steps line starts at each form's lowest ink: the Mark orb's edge, the Hologram's and Solid acrylic's point (5px higher, `StepsList`), the constellation's own line.
+
+- **A, human:** Aura is the liquid-chrome hexagon with eyes. While Valerie works: "Working · step n of N", the step pill on the right, and the skeleton the whole time.
+- **Both, while working:** opened, the steps hang from Aura: one line comes straight down out of Aura, under its centre (`LiveSteps` in `StepsList.tsx`), drawn down when the steps open and growing as each step arrives. It is not a timeline joining the steps. In B it is the constellation's own line: the constellation draws it from whichever star is lowest to its bottom edge (Aura `tether`) and the line carries on in the same colour, so the constellation and the steps read as one connected thing. Beside it, only the steps reached so far: a check on finished ones (grey), a spinner on the current one (ink; glare in B). The header no longer repeats the current step while it's open.
+- **Dev mode runs effects twice** (`StrictMode`): anything that must happen once (a sound cue, the voice) goes behind a ref, but timers and clocks are set up on every run with a cleanup. Check live answers on `npm run dev`, not only the build.
+- **B, abstract:** Aura is the Constellation (`components/brand/Constellation.tsx`), the Valerie sparkle in data points with no face; each state is a form the points ease into. Two drawings, by size, and they stay distinct: on Home (64px and up) it's the original sparkle as a grid of 77 points (`ConstellationMark.tsx`), left as it was; in the thread and its loader (28px) it's 13 points (a core, two down each arm, four where the arms meet), few enough to read small. Changes asked for the loader apply to the 13-point one only. While Valerie works it becomes a constellation at a lively pace: the points spring apart into 3–6 stars (the rest fold into them), a line darts between them one star at a time, the sky keeps turning, and every 2.6s the stars jump to the next: the Northern Cross (the sparkle in stars), Cassiopeia, Lyra, the Summer Triangle. Keep it sparse and quick, never sluggish: no star field, no geometric shapes (circles, discs, waves, charts), nothing that reads as falling or negative. The step line sits right beside Aura (no name), in dark text with a plain glare (`.glare-text`): a light band sweeps across it in 1s, then rests. No colour in the glare. Each answer waits about 20s (19–21s) (`prompts.ts`, logged in `docs/DATA.md`), in two stages: first only Aura and one line naming the step (shimmering, collapsed; a click opens the steps, and the line then reads "Working"), then the skeleton for the last 2.5s. The skeleton is that answer's own shape (`AnswerSkeleton`, `ChartSkeleton`): its real headline and paragraphs laid out unseen, each line a shimmer bar as long as the line (`.skeleton-text`), then its chart card at full size, so the answer replaces it line for line.
+
+## Aura experiments (`/exp`)
+
+Leadership passed on the chrome hexagon and the cloud (28 Oct): no human structure, something futuristic. `/exp` (outside the product shell, like `/lab`) shows five directions side by side, each in idle, thinking and speaking, at stage size and at 64 and 28px; Cycle steps through the states, `?e=<id>` opens one full screen, `?state=` fixes the state. From the logo: **Glass** (cut glass, light moving through; the halves part while thinking), **Plasma** (Paper Heatmap in the mark), **Hologram** (stacked slices in 3D that fan out). New forms: **Orb** (Paper GemSmoke sphere) and **Halo** (rings of light, a comet while thinking). Code in `src/components/exp/`; one frame loop each (`motion.ts`) eases speed, thinking and the stand-in voice so a state change never jumps. Colours from brand tokens only (D21). The Hologram is v4's Aura (28 Oct: the structure holds still, no sway or twist; one motion per state, picked from `/exp/bot`: at rest, Scan, a band of light reading down the face now and then; thinking, Gyro, the two parts lifting apart and spinning against each other, then settling face-on; speaking, Echo, outlines running out behind it, each fainter as it goes (not always on: the user found the default cleaner without them). `Aura.tsx` renders it, and v1's Mark orb, `exp/MarkOrb.tsx`; while speaking they follow the recorded voice's loudness); Glass, Plasma, Orb (v3's, rejected) and Halo stay here.
+
+**`/exp/bot`** (28 Oct, after v4 was preferred): the next round for Aura, on the same board as `/exp` (`ExpBoard` in `ExpPage.tsx`; linked from `/exp` and `/versions`). Echo (hairline echoes of the mark round one solid core) was the one the user found polished, so it leads: **Echo, developed** (Echo, Depth, Split, Rosette, Trail; `EchoFamily.tsx`). Then **Solid** (Acrylic, Navy; `Solid.tsx`): the mark as a real 3D object (three.js, loaded only here and in v1; one shared WebGL renderer copies each frame to its own canvas), two thick bevelled pieces lit by a studio environment, no drawn outline, after the user's references (a glossy acrylic slab, discs fanned into a flower). The user wants classy as minimal: one colour, one material, the edge read from thickness and light, never a drawn border or busy bands; and **dark navy, because Aura sits on a white screen**. Then **Other forms from the mark** (Silk, Prism, Facets, Hinge) and **Hologram motion** (Helix, Scan, Flow, Gyro, next to today's Hologram). Removed on review (28 Oct): Engraved, Neon trace, Bloom, Liquid, Projector; then Foil, Gel, Ink, Paper, Frosted glass, and Chrome, Liquid chrome, Glass, Enamel, Titanium (drawn bezels and bands read busy, not classy). Keep the set varied, not variations on one look, and the logo is a starting point, not a limit. Code in `src/components/exp/bot/` (`HoloStack.tsx` is the shared slice stack; `palette.ts` the brand scale and mark geometry). Same props as every Aura form, so a pick can move into v4 by swapping the form in `Aura.tsx`.
+
+## Home layouts
+
+Each version has one Home (`HomePage layout=…`, picked in `App.tsx`). v2 uses the lens tabs; v1, v3 and v4:
+
+- **v4** (`side`, the Hologram): Aura beside the headline (not above it) and the composer on the left, the questions stacked as white cards (360px wide) on the right under "Suggested questions". Both columns start on one line: Aura, the headline and the "Suggested questions" heading share their top edge (the Hologram nudged up 16px, as far as its mark sits inside its box); the space under the composer is left open.
+- (A left side panel opened from the composer, was tried and removed on 27 Oct.)
+- **v1** (`pairs`, 28 Oct): as v3 below, but the cards two to a row (equal heights in a row; the fifth, odd one runs the whole row).
+- **v3** (`below`, 28 Oct; v1's until then): Aura and the headline centred, and v4's cards (same card, "Suggested questions" heading, preview and pick) stacked under the composer at its 756 width, one question per line. At 1440 × 900 the last card sits just below the fold.
+- In v1, v3 and v4, pointing at a question previews it in the composer, and picking one rings it and types it into the box, then sends: the card and the composer read as one thing.
+- New chat and "Something else" go to `/`, which is that version's own Home.
+
+## Hosting
+Netlify (`npm run deploy:netlify`, `netlify.toml`) and Vercel (`npm run deploy:vercel`, `vercel.json`, `.vercelignore`), both uploaded straight from this folder with no Git. No password: the link is shared only with leadership, and every file says noindex (meta, `robots.txt`, `X-Robots-Tag`). Cloudflare Pages with the password gate (`functions/_middleware.js`) stays available. See `docs/DEPLOY.md`.
+
+## Working with the user
+
+- The user is a product designer. They will present this to leadership within one to two days, so favour fast, finished-looking progress over discussion.
+- **Quality bar:** a world-class AI analyst product. That means clean, strong visual hierarchy, restraint and precise alignment. The user has rejected filler text, invented labels, cluttered chrome and generic "chat app" layouts.
+- **Keep replies short.** Say what changed and what to look at, without restating instructions the user already knows.
+- **Source control:** do not suggest GitHub, remotes or pushing; it is out of scope. Before a large or risky change, add one line reminding the user to back up the folder.
+- **Verify before handing over:** run `npm run build` (it must pass), and check the affected screens in the browser at 1440 × 900.
+- **Say a label once.** If a word or icon would repeat on every row (a lens, a status, a type icon), group by it and name it once, or drop it. Show a status only when it differs from the norm. Icons sit on the first line of their text, never centred against a multi-line block.
+- **Grid:** everything in the thread sits on the 720px column, charts included (the composer is the one exception, 756 with its content on the 720 edges). Before handing over, check the screenshots for anything floating off those edges, and for stacked boxes where a hairline or plain spacing would do.
+- **History:** the Figma Stage 2 v3 screens are wireframes only. The visual direction is being set in code. The first design pass gave answers a headline, 3 key-figure tiles, ranked lists, topic chips, quote cards and a caveat callout, and refreshed the home screen.
+
+## Draft copy
+
+Interface strings for features that aren't in the live product yet live in `src/data/ui.ts`. Each one is marked DRAFT until the user approves it. Add new ones there, not inline.
+
+## Backlog
+
+Done: Errors, Persona switch, Long thread, Motion polish, token clean-up, offline strip on Home.
+
+Open: **approve draft copy** in `src/data/ui.ts`.
+
+In progress: **Aura and the calm canvas** (`docs/AURA-PLAN.md`). Phases 1–2 done (canvas, pills, Home composer and starter card, Aura material, `/lab`, the flight from Home to the first answer); Phases 3, 4 and 6 done (the morph, the two-tone lead with Aura's beat, the composer dock, and sound: four synthesised cues, off by default, speaker pill or `?sound=1`); Phase 5 done (steps without a box, 8px rhythm, no 13px type, AA grey on the canvas, nested radii); Phase 7 done (shader canvases pooled: 0 dropped frames after the first send on the real GPU; WebKit, Firefox and edge states checked); Phase 9: Aura is now the liquid-chrome hexagon with a face and a voice (the cloud and three other mascot options stay in `/lab?view=character` for leadership); the answers were rebuilt to the Figma answer designs, card chrome and Pin insight included, and the growth-numbers question removed for want of a design (27 Oct). Phase 8 done (before/after slides in `docs/aura/slides/`, the demo video `docs/aura/valerie-demo.mp4`, README links checked). If a headline or the voice changes, re-record with `tools/voice/record.sh`. The demo video is made only when the user asks for it, once everything is final; don't re-render it mid-work.
+
+Notes:
+- Personas share the same questions and answers by design; only Brie's steps list differs (no tool calls).
+- Two deliberate exceptions to the colours rule: the host stand-in in `AppShell` (notification dot, workspace tile) and the gap lines in the Purchase drivers chart card. Both mirror the live dashboard.
 
 ## Commands
 

@@ -15,5 +15,4 @@ export const site = {
   ],
   tagline: 'You bring the question, I’ll bring the answer.',
   placeholder: 'Ask anything about the skincare category and Bespoke’s position…',
-  disclaimer: 'Valerie can make mistakes. Check key figures against the source data.',
 }

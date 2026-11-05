@@ -1,39 +1,63 @@
+import { ArrowDownUp } from 'lucide-react'
 import { ChartCard } from './ChartCard'
 import { brandStrength as d } from '@/data/charts'
 import { cn } from '@/lib/cn'
 
-const cols = [['positioning', 'Positioning'], ['usp', 'USP'], ['endorsements', 'Endorsements'], ['overall', 'Overall']] as const
-
+/**
+ * R2 · Appendix A4 · Brand strength, as Figma draws it (AI-chat-screen 119:41659): a grades table (56px rows, a hairline
+ * under every cell, the brand in a flexible column and four 108px grade columns with sort-style headers), its note, then
+ * the Key insights panel. Bespoke's row is in its purple, semibold; a withheld grade is a grey dash.
+ */
 export function BrandStrengthTable() {
   return (
-    <ChartCard eyebrow={d.eyebrow} title={d.title} howTo="Grades are ordinal (1 to 5) from the company-profile run. A dash means the grade was withheld, never that it is low.">
-      <div className="grid grid-cols-[1fr_300px] gap-6">
-        <div>
-          <table className="w-full text-sm">
+    <ChartCard title={d.title}>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
+          <table className="w-full table-fixed border-separate border-spacing-0 text-sm">
+            <colgroup>
+              <col />
+              {d.columns.map((c) => <col key={c.key} className="w-[108px]" />)}
+            </colgroup>
             <thead>
-              <tr className="text-left text-xs text-muted-foreground">
-                <th className="pb-3 font-normal">Brand</th>
-                {cols.map(([, l]) => <th key={l} className="pb-3 text-right font-normal">{l}</th>)}
+              <tr className="h-14 [&>*]:border-b [&>*]:border-border">
+                <th scope="col" className="truncate px-4 text-left font-semibold leading-6 text-muted-foreground">{d.brandLabel}</th>
+                {d.columns.map((c) => (
+                  <th key={c.key} scope="col" className="p-0 font-semibold leading-6 text-muted-foreground">
+                    {/* Figma's ghost table-header button; it overflows its 108px column evenly when the label is long. */}
+                    <span className="flex justify-center">
+                      <span className="flex min-w-20 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-2xl px-4 py-3">
+                        <span className="px-1">{c.label}</span>
+                        <ArrowDownUp className="size-4 shrink-0" aria-hidden />
+                      </span>
+                    </span>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {d.rows.map((r) => (
-                <tr key={r.brand} className={cn('h-11 border-t border-border', r.isBespoke && 'font-semibold text-data-bespoke')}>
-                  <td>{r.brand}</td>
-                  {cols.map(([k]) => {
-                    const v = r[k]
-                    return <td key={k} className={cn('text-right tabular-nums', k === 'overall' && 'font-semibold', v === null && 'text-muted-foreground')}>{v === null ? '–' : k === 'overall' ? v.toFixed(2) : v}</td>
+                <tr key={r.brand} className={cn('h-14 [&>*]:border-b [&>*]:border-border', r.isBespoke ? 'font-semibold text-data-bespoke-ink' : 'text-foreground')}>
+                  <th scope="row" className={cn('truncate px-4 text-left', r.isBespoke ? 'leading-5' : 'font-normal leading-6')}>{r.brand}</th>
+                  {d.columns.map(({ key }) => {
+                    const v = r[key]
+                    return (
+                      <td key={key} className={cn('truncate text-center', v === null ? 'font-normal leading-6 text-muted-foreground' : 'font-semibold leading-5')}>
+                        {v === null ? '–' : key === 'overall' ? v.toFixed(2) : v}
+                      </td>
+                    )
                   })}
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-muted-foreground">{d.note}</p>
+          <p className="text-xs leading-4 text-muted-foreground">{d.note}</p>
         </div>
-        <aside className="self-start rounded-xl bg-muted/60 p-4">
-          <p className="text-sm font-semibold">Key insights</p>
-          {d.insights.map((t) => <p key={t} className="mt-2 text-sm leading-6 text-muted-foreground">{t}</p>)}
-        </aside>
+        <div className="flex flex-col gap-3 rounded-2xl bg-chart-card p-4">
+          <p className="text-base font-semibold leading-6 text-foreground">{d.insightsTitle}</p>
+          <div className="flex flex-col gap-2 text-sm leading-5 text-muted-foreground">
+            {d.insights.map((t) => <p key={t}>{t}</p>)}
+          </div>
+        </div>
       </div>
     </ChartCard>
   )

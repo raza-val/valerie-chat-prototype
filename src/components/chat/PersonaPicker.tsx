@@ -12,7 +12,7 @@ export function Avatar({ p, size = 24 }: { p: Persona; size?: number }) {
   )
 }
 
-/** "Answer as" picker inside the composer. */
+/** "Answer as" picker inside the composer, beside the +: the name only; the role is in the menu, which opens below it (Home only). */
 export function PersonaPicker() {
   const { persona, setPersona } = useStore()
   const [open, setOpen] = useState(false)
@@ -23,18 +23,16 @@ export function PersonaPicker() {
     return () => document.removeEventListener('mousedown', close)
   }, [])
   return (
-    <div ref={ref} className="relative">
-      <button type="button" onClick={() => setOpen((o) => !o)} className="flex h-8 items-center gap-2 rounded-full bg-muted pl-1 pr-2.5 text-sm hover:bg-border/60">
-        <Avatar p={persona} />
-        <span className="font-semibold">{persona.name}</span>
-        <span className="text-muted-foreground">{persona.role}</span>
-        <ChevronDown className="size-4 text-muted-foreground" />
+    <div ref={ref} className="relative shrink-0">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-label={`${persona.name}, ${persona.role}`} aria-expanded={open} className={cn('flex h-9 items-center gap-1.5 rounded-lg pl-1.5 pr-2 text-sm font-medium transition-colors hover:bg-muted', open && 'bg-muted')}>
+        <Avatar p={persona} size={20} />
+        {persona.name}
+        <ChevronDown className="-ml-0.5 size-3.5 text-muted-foreground" />
       </button>
       {open && (
-        <div className="absolute bottom-10 left-0 z-30 w-64 rounded-xl border border-border bg-background p-1.5 shadow-xl">
-          <p className="px-2.5 pb-1.5 pt-1 text-xs text-muted-foreground">Tune answers for</p>
+        <div className="absolute left-0 top-11 z-30 w-64 rounded-xl border border-border bg-background p-1.5 shadow-xl">
           {personas.map((p) => (
-            <button key={p.id} onClick={() => { setPersona(p); setOpen(false) }} className={cn('flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm hover:bg-muted', p.id === persona.id && 'bg-muted')}>
+            <button key={p.id} onClick={() => { setPersona(p); setOpen(false) }} className={cn('flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm hover:bg-muted', p.id === persona.id && 'bg-muted')}>
               <Avatar p={p} size={28} />
               <span className="flex-1"><span className="block font-semibold">{p.name}</span><span className="block text-xs text-muted-foreground">{p.role}</span></span>
               {p.id === persona.id && <Check className="size-4 text-brand-600" />}

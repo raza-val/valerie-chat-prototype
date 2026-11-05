@@ -4,3 +4,11 @@ dist
 *.local
 .env
 .vercel
+.wrangler
+
+# tools: compiled helpers
+tools/voice/tts
+tools/video/encode
+
+# Local Netlify folder
+.netlify

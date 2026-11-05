@@ -15,6 +15,8 @@ The **Figma** column shows the value in the Figma file. The **Prototype** column
 
 ## R1 · What the category talks about (`category-talk`, chart `charts/topicShare.ts`)
 
+The chart is Figma's "Fastest share gainers" list (27 Oct): the top 10 topics by share growth. With the prototype's values the last four reorder (Vitamin C, Acne clearing, then Peptides).
+
 | What | Figma | Prototype |
 | --- | --- | --- |
 | Needs / Selection factors share | 33.9% / 25.3% | 32.7% / 26.1% |
@@ -22,11 +24,9 @@ The **Figma** column shows the value in the Figma file. The **Prototype** column
 | Dark spot treatments CAGR · mentions | +60.1% · 391 | +54.8% · 362 |
 | Mature population CAGR · mentions | +35.6% · 692 | +33.2% · 648 |
 | Pigmentation reduction CAGR · mentions | +30.1% · 1,751 | +28.4% · 1,620 |
-| Card title | +30% / −16% / −13% | +28% / −15% / −14% |
-| Top topics (3-yr share) | 25, 22, 10, 8, 8, 7 | 24, 21, 11, 9, 7, 7 |
-| Fastest growing | 30.1, 22.8, 20.9, 15.9, 15.7 | 28.4, 21.6, 19.7, 16.3, 15.1 |
-| Most declining | −16.2, −12.9, −10.8, −1.4, −0.3 | −14.8, −13.6, −9.9, −1.9, −0.6 |
-| Quarterly bars | (not readable from Figma) | Generated to match the 3-year averages and growth directions |
+| Card: Pore appearance / Niacinamide / Rapid weight-loss | +22.8 / +22.3 / +20.9% | +21.6 / +20.9 / +19.7% |
+| Card: Active compatibility / Peptides / Vitamin C / Acne clearing | +18.5 / +16.5 / +16.2 / +15.9% | +17.8 / +15.9 / +16.6 / +16.3% |
+| Card title | +60.1% / +35.6% | +54.8% / +33.2% |
 
 ## R2 · Where Bespoke sits (`where-bespoke-sits`, chart `charts/brandStrength.ts`)
 
@@ -50,7 +50,6 @@ The **Figma** column shows the value in the Figma file. The **Prototype** column
 | Barefaced | 1,106 | 1,042 |
 | Paula's Choice | 938 | 884 |
 | AMPERNA | 364 | 351 |
-| Rationale | 0 (added as a row) | 0 |
 
 ## R4 · Whitespace (`whitespace`, chart `charts/leavesOut.ts`)
 
@@ -66,12 +65,9 @@ The **Figma** column shows the value in the Figma file. The **Prototype** column
 | Card: After-sun share · growth | 0.5% · +28.6% | 0.6% · +26.9% |
 | Card: Rapid weight-loss share · growth | 0.4% · +20.9% | 0.4% · +19.7% |
 
-## R5 · Growth numbers (`growth-numbers`, chart `charts/sweetSpot.ts`)
+## R5 · Growth numbers (removed)
 
-- The growth figures match R1 and R4 above, plus Niacinamide (+22.3% → +20.9%).
-- The leader count per topic is unchanged.
-- Which leader sits in which cell is illustrative.
-- The 22 stable and 12 erratic topic lists are unchanged.
+The Figma answer designs have no answer for "Check the growth numbers", so the question, its chart and its voice clips were removed (27 Oct).
 
 ## R6 · Hear it from the buyers (`hear-the-buyers`, chart `charts/purchaseDrivers.ts`)
 
@@ -85,4 +81,14 @@ The **Figma** column shows the value in the Figma file. The **Prototype** column
 
 ## Timings
 
-The step timings and tool names in `prompts.ts` (shown in the steps list and traces) are illustrative. Their totals match the times shown in Figma, such as 7.2s.
+The step timings and tool names in `prompts.ts` (shown in the steps list and traces) are illustrative. Their totals match the times shown in Figma, such as 8.4s, except `category-talk`, which totals 5.7s in 3 steps.
+
+**v1–v4 (27–28 Oct):** every answer waits about 20s (24–30s until 28 Oct), so its Aura has time to change form the way a slow real reply does. The quickest answer takes 19s and the slowest 21s, the rest in between in the same order, and each step keeps its share of the wait. The scaling is done in `prompts.ts` at load, so the header, the steps list and the traces show the same times. Version A keeps the times above.
+
+| Answer | `/` (dropped 28 Oct) | v1–v4 |
+| --- | --- | --- |
+| category-talk | 5.7s | 19.0s |
+| what-cant-be-measured | 6.1s | 19.2s |
+| where-bespoke-sits | 8.4s | 20.5s |
+| hear-the-buyers | 8.9s | 20.8s |
+| whitespace | 9.3s | 21.0s |

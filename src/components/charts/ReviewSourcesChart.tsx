@@ -1,28 +1,39 @@
 import { ChartCard } from './ChartCard'
-import { Badge } from '@/components/ui/Badge'
 import { reviewSources as d } from '@/data/charts'
 import { thousands } from '@/lib/format'
 import { cn } from '@/lib/cn'
 
+/**
+ * Appendix B · review sources, as Figma draws it (AI-chat-screen 119:41734): one 28px row per brand with a 12px gap —
+ * name (176px), a soft 24px bar scaled to the largest count, the count (64px, right-aligned) and the source chips (300px).
+ * Bespoke's row is purple; a caption sits 20px under the list.
+ */
 export function ReviewSourcesChart() {
   const max = Math.max(...d.rows.map((r) => r.reviews))
   return (
-    <ChartCard eyebrow={d.eyebrow} title={d.title} howTo="Bar length is the number of written reviews in the analysis. Chips show which sources those reviews were collected from.">
-      <ul>
-        {d.rows.map((r) => (
-          <li key={r.brand} className="grid h-12 grid-cols-[160px_1fr_220px] items-center gap-4 border-b border-border text-sm last:border-0">
-            <span className={cn(r.isBespoke && 'font-semibold text-data-bespoke')}>{r.brand}</span>
-            <span className="flex items-center gap-3">
-              <span className={cn('h-2.5 rounded-full', r.isBespoke ? 'bg-data-bespoke' : 'bg-slate-300 dark:bg-slate-600')} style={{ width: `${Math.max(2, (r.reviews / max) * 100)}%` }} />
-              <span className="shrink-0 tabular-nums text-xs font-semibold">{r.reviews ? thousands(r.reviews) : '0'}</span>
-            </span>
-            <span className="flex flex-wrap gap-1.5">
-              {r.sources.length ? r.sources.map((s) => <Badge key={s}>{s}</Badge>) : <span className="text-xs text-muted-foreground">{'note' in r ? r.note : ''}</span>}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-3 text-xs text-muted-foreground">{d.note}</p>
+    <ChartCard title={d.title}>
+      <div className="flex flex-col gap-5">
+        <ul className="flex flex-col gap-3">
+          {d.rows.map((r) => (
+            <li key={r.brand} className="flex items-center gap-3 text-sm leading-5">
+              <span className={cn('w-44 shrink-0', r.isBespoke ? 'font-semibold text-data-bespoke-ink' : 'text-foreground')}>{r.brand}</span>
+              <span className="flex h-7 min-w-0 flex-1 items-center">
+                <span
+                  className="h-6 rounded-lg"
+                  style={{ width: `${(r.reviews / max) * 100}%`, backgroundColor: r.isBespoke ? d.bars.bespoke : d.bars.leader, boxShadow: d.bars.sheen }}
+                />
+              </span>
+              <span className={cn('w-16 shrink-0 text-right font-semibold', r.isBespoke ? 'text-data-bespoke-ink' : 'text-foreground')}>{thousands(r.reviews)}</span>
+              <span className="flex w-[300px] shrink-0 items-center gap-2 overflow-hidden">
+                {r.sources.map((s) => (
+                  <span key={s} className="shrink-0 whitespace-nowrap rounded-full border border-border px-2.5 py-0.5 text-xs font-semibold leading-4 text-foreground">{s}</span>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs leading-4 text-muted-foreground">{d.note}</p>
+      </div>
     </ChartCard>
   )
 }

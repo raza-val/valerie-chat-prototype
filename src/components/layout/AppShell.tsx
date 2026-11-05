@@ -4,6 +4,7 @@ import { Bell, ChevronDown, ChevronRight, CircleUser, Moon, PanelLeft, Sun } fro
 import { ValerieLogo } from '@/components/brand/ValerieLogo'
 import { useTheme } from '@/lib/theme'
 import { site } from '@/data/site'
+import { versionsCopy } from '@/data/ui'
 import { cn } from '@/lib/cn'
 
 /**
@@ -18,19 +19,22 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const right = (
     <div className="flex items-center gap-1">
-      <button onClick={toggle} className="grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Toggle theme">
+      <button onClick={toggle} className="grid size-8 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Toggle theme">
         {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
       </button>
-      <span className="relative grid size-9 place-items-center rounded-lg text-muted-foreground"><Bell className="size-4" /><span className="absolute right-1 top-1 grid size-4 place-items-center rounded-full bg-amber-200 text-[10px] font-semibold text-amber-800">2</span></span>
-      <span className="grid size-9 place-items-center rounded-lg text-muted-foreground"><CircleUser className="size-4" /></span>
+      <span className="relative grid size-8 place-items-center rounded-lg text-muted-foreground"><Bell className="size-4" /><span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-amber-200 text-[10px] font-semibold text-amber-800">2</span></span>
+      <span className="grid size-8 place-items-center rounded-lg text-muted-foreground"><CircleUser className="size-4" /></span>
     </div>
   )
 
   if (!dashboard) {
     return (
       <div className="flex h-full flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-surface-header px-6">
-          <ValerieLogo className="h-6 text-foreground" />
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface-header px-5">
+          {/* The logo opens the versions page (a plain link: each version is its own basename). */}
+          <a href="/versions" aria-label={versionsCopy.title} title={versionsCopy.title} className="-m-1 rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
+            <ValerieLogo className="h-[22px] text-foreground" />
+          </a>
           {right}
         </header>
         <main className="min-h-0 flex-1">{children}</main>
@@ -42,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="flex h-full">
       <DashboardSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-surface-header px-6">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface-header px-5">
           <nav className="flex items-center gap-2 text-sm text-muted-foreground">
             <PanelLeft className="size-4" />
             <span className="mx-2 h-4 w-px bg-border" />
@@ -66,7 +70,7 @@ function DashboardSidebar() {
     <aside className="hidden w-60 shrink-0 flex-col bg-sidebar p-3 text-white md:flex" style={{ backgroundImage: 'radial-gradient(rgba(148,163,184,.12) 1px, transparent 1px)', backgroundSize: '14px 14px' }}>
       <div className="px-2 py-3"><ValerieLogo className="h-7 text-white" /></div>
       <div className="mt-2 flex items-center gap-3 rounded-xl border border-brand-700/60 bg-white/5 p-3">
-        <span className="grid size-9 place-items-center rounded-lg bg-teal-500 text-sm font-semibold">B</span>
+        <span className="grid size-8 place-items-center rounded-lg bg-teal-500 text-sm font-semibold">B</span>
         <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{site.workspace}</span><span className="block text-xs text-slate-400">Brands</span></span>
         <ChevronDown className="size-4 text-slate-400" />
       </div>

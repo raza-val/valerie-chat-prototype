@@ -2,17 +2,17 @@ import { ArrowLeft, Copy } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Sheet } from '@/components/ui/Sheet'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { useToast } from '@/components/ui/Toast'
 import { getPrompt, prompts } from '@/data/prompts'
 import { totalSeconds } from '@/lib/format'
 import { useStore } from '@/lib/store'
+import { cn } from '@/lib/cn'
 
 const traceId = (id: string) => `tr_${(id.length * 7919).toString(16)}${id.slice(0, 3)}`
 
 /** Traces: list of runs, or the step-by-step timing of one run. */
 export function TracesDrawer() {
-  const { tracesOpen, closeTraces, traceFocus, persona } = useStore()
+  const { tracesOpen, closeTraces, traceFocus, persona: current, answeredFor } = useStore()
   const [sel, setSel] = useState<string | null>(traceFocus)
   const toast = useToast()
   useEffect(() => setSel(traceFocus), [traceFocus, tracesOpen])
@@ -21,21 +21,24 @@ export function TracesDrawer() {
   return (
     <Sheet open={tracesOpen} onClose={closeTraces} title={p ? 'Trace' : 'View traces'} description={p ? p.question : 'How Valerie produced each reply: steps, tool calls and timings.'} width={480}>
       {!p ? (
-        <ul className="flex flex-col gap-2">
-          {prompts.map((x) => (
-            <li key={x.id}>
-              <button onClick={() => setSel(x.id)} className="w-full rounded-xl border border-border p-3.5 text-left hover:bg-muted">
-                <span className="flex items-start gap-3">
-                  <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{x.question}</span>
-                  <Badge tone="green">Answered</Badge>
-                </span>
-                <span className="mt-1.5 block text-xs text-muted-foreground">{x.when} · {totalSeconds(x.steps)}s · {x.steps.length} steps</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        // Grouped by day like Chats; every run here answered, so a status would only repeat itself.
+        ['Today', 'Yesterday', 'Mon'].map((w) => ({ w, items: prompts.filter((x) => x.when === w) })).filter((g) => g.items.length).map((g, i) => (
+          <div key={g.w} className={cn(i > 0 && 'mt-5')}>
+            <p className="text-xs font-medium text-muted-foreground">{g.w === 'Mon' ? 'Earlier this week' : g.w}</p>
+            <ul className="-mx-2.5 mt-1.5">
+              {g.items.map((x) => (
+                <li key={x.id}>
+                  <button onClick={() => setSel(x.id)} className="block w-full rounded-lg px-2.5 py-2.5 text-left hover:bg-muted">
+                    <span className="block text-sm font-medium leading-5">{x.question}</span>
+                    <span className="mt-1 block text-xs tabular-nums text-muted-foreground">{totalSeconds(x.steps)}s · {x.steps.length} steps</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
       ) : (
-        <TraceDetail id={p.id} onBack={() => setSel(null)} onCopy={() => { navigator.clipboard?.writeText(traceId(p.id)); toast('Trace ID copied') }} persona={`${persona.name}, ${persona.role}`} />
+        <TraceDetail id={p.id} onBack={() => setSel(null)} onCopy={() => { navigator.clipboard?.writeText(traceId(p.id)); toast('Trace ID copied') }} persona={((x) => `${x.name}, ${x.role}`)(answeredFor[p.id] ?? current)} />
       )}
     </Sheet>
   )
