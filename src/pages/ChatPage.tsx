@@ -18,6 +18,7 @@ import { OfflineStrip } from '@/components/chat/OfflineStrip'
 import { ModelPicker } from '@/components/chat/ModelPicker'
 import { PersonaPicker } from '@/components/chat/PersonaPicker'
 import { BriefPanel, SPLIT, SplitHandle, briefFor } from '@/components/chat/BriefView'
+import type { Attachment } from '@/components/chat/Attachments'
 import { play } from '@/lib/sound'
 import { cn } from '@/lib/cn'
 import { VERSION } from '@/lib/aura'
@@ -38,7 +39,7 @@ export function ChatPage() {
   return <ChatThread key={seed} />
 }
 
-type TurnState = { key: number; prompt: Prompt; persona: Persona; model: Model; mode: TurnMode }
+type TurnState = { key: number; prompt: Prompt; persona: Persona; model: Model; mode: TurnMode; files?: Attachment[] }
 const modes: TurnMode[] = ['answer', 'working', 'error', 'chart-error']
 
 function ChatThread() {
@@ -47,7 +48,10 @@ function ChatThread() {
   const navigate = useNavigate()
   const toast = useToast()
   const { offline, reconnect } = useOffline()
-  const { persona, setPersona, model } = useStore()
+  const { persona, setPersona, model, outbox, setOutbox } = useStore()
+  // Files sent from Home with the first question: picked up once as the chat opens.
+  const [firstFiles] = useState(outbox)
+  useEffect(() => { if (outbox.length) setOutbox([]) }, [])
   const prompt = getPrompt(id)
   const urlPersona = personas.find((x) => x.id === params.get('persona'))
   useEffect(() => { if (urlPersona) setPersona(urlPersona) }, [urlPersona, setPersona])
@@ -56,7 +60,7 @@ function ChatThread() {
     if (!prompt) return []
     const list = [prompt, ...(params.get('turns')?.split(',').map(getPrompt) ?? [])].filter((p): p is Prompt => !!p)
     const frozen = modes.find((m) => m === params.get('state')) ?? 'live'
-    return list.map((p, i) => ({ key: i, prompt: p, persona: urlPersona ?? persona, model, mode: i === list.length - 1 ? frozen : 'answer' }))
+    return list.map((p, i) => ({ key: i, prompt: p, persona: urlPersona ?? persona, model, mode: i === list.length - 1 ? frozen : 'answer', files: i === 0 && firstFiles.length ? firstFiles : undefined }))
   })
   const latest = turns[turns.length - 1]
   const [working, setWorking] = useState(false)
@@ -118,18 +122,18 @@ function ChatThread() {
   }, [turns.length])
 
   const shellParams = () => { const sp = new URLSearchParams(); if (params.get('shell')) sp.set('shell', params.get('shell')!); return sp }
-  const ask = (text: string) => {
+  const ask = (text: string, files: Attachment[] = []) => {
     if (/full report/i.test(text)) return toast('Full reports aren’t part of this prototype')
     if (/something else/i.test(text)) return navigate({ pathname: '/', search: shellParams().toString() })
     const m = matchPrompt(text)
     if (!m || m.id === latest?.prompt.id) return toast('This prototype answers the five starter questions')
     if (!prompt) return navigate(`/chat/${m.id}?${shellParams()}`)
     play('send')
-    setTurns((ts) => [...ts, { key: ts.length, prompt: m, persona, model, mode: 'live' }])
+    setTurns((ts) => [...ts, { key: ts.length, prompt: m, persona, model, mode: 'live', files: files.length ? files : undefined }])
   }
 
   return (
-    <div ref={root} data-canvas className={cn('relative flex h-full bg-canvas', resizing && 'cursor-col-resize select-none')}>
+    <div ref={root} data-canvas className={cn('relative flex h-full overflow-hidden bg-canvas', resizing && 'cursor-col-resize select-none')}>
       {/* The chat, full width; while a brief is open it steps into a column on the left and the document takes the rest. */}
       <div className={cn('relative flex h-full min-w-0 shrink-0 flex-col', !resizing && 'transition-[width] duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]')} style={{ width: doc ? chatWidth : '100%' }}>
       <div ref={scroller} onScroll={checkJump} className="min-h-0 flex-1 overflow-y-auto">
@@ -137,7 +141,7 @@ function ChatThread() {
         <div className={cn('mx-auto flex max-w-[768px] flex-col px-6 pt-4', VERSION === 'main' ? 'pb-40' : 'pb-36')}>
           {!prompt ? (
             <>
-              <div className="mx-auto w-full max-w-[720px]"><UserBubble text={params.get('q') ?? ''} /></div>
+              <div className="mx-auto w-full max-w-[720px]"><UserBubble text={params.get('q') ?? ''} files={firstFiles} /></div>
               <div className="mt-8"><Unknown onPick={(pid) => navigate(`/chat/${pid}?${shellParams()}`)} /></div>
             </>
           ) : (
@@ -149,6 +153,7 @@ function ChatThread() {
                     ref={t === latest ? latestRef : undefined}
                     prompt={t.prompt}
                     persona={t.persona}
+                    files={t.files}
                     mode={t.mode}
                     onWorking={t === latest ? (w) => { setWorking(w); checkJump() } : undefined}
                     onFollowUp={t === latest ? ask : undefined}

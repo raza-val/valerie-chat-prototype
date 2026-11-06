@@ -2,6 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from 'react'
 import { personas, type Persona } from '@/data/personas'
 import { modelCopy, type Model } from '@/data/ui'
 import { reducedMotion } from '@/lib/motion'
+import type { Attachment } from '@/components/chat/Attachments'
 
 /** Aura flying from the Home hero (centre x, y and size) to the seat it lands on. */
 export type Flight = { from: { x: number; y: number; size: number }; seat: HTMLElement | null }
@@ -21,6 +22,9 @@ type Store = {
   /** The persona each chat's answer was tuned for, by chat id */
   answeredFor: Record<string, Persona>
   setAnsweredFor: (chatId: string, p: Persona) => void
+  /** Files sent from Home with the first question, for the chat to pick up as it opens. */
+  outbox: Attachment[]
+  setOutbox: (files: Attachment[]) => void
   flight: Flight | null
   /** Take off from the Home hero's box (skipped under reduced motion). */
   startFlight: (from: DOMRect) => void
@@ -39,6 +43,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [traceFocus, setTraceFocus] = useState<string | null>(null)
   const [answeredFor, setAnsweredForMap] = useState<Record<string, Persona>>({})
   const [flight, setFlight] = useState<Flight | null>(null)
+  const [outbox, setOutbox] = useState<Attachment[]>([])
   return (
     <Ctx.Provider
       value={{
@@ -47,6 +52,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         closeTraces: () => setTracesOpen(false),
         answeredFor,
         setAnsweredFor: (chatId, p) => setAnsweredForMap((m) => (m[chatId]?.id === p.id ? m : { ...m, [chatId]: p })),
+        outbox, setOutbox,
         flight,
         startFlight: (r) => { if (!reducedMotion()) setFlight({ from: { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width }, seat: null }) },
         claimSeat: (el) => setFlight((f) => (f && !f.seat ? { ...f, seat: el } : f)),

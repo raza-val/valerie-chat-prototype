@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 're
 import { ArrowUp, Mic, Plus, Square } from 'lucide-react'
 import { PersonaPicker } from './PersonaPicker'
 import { ModelPicker } from './ModelPicker'
+import { AttachMenu, AttachmentCard, type Attachment } from './Attachments'
 import { Aura } from '@/components/brand/Aura'
 import { MORPH_MS, VERSION } from '@/lib/aura'
 import { useToast } from '@/components/ui/Toast'
@@ -25,7 +26,7 @@ import { cn } from '@/lib/cn'
  * the card and the composer read as one thing.
  */
 export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled = false, autoFocus = false, tall = false, pickPersona = false, pickModel = true, onTyping, docked = false, seed, className }: {
-  placeholder: string; onSubmit: (text: string) => void; busy?: boolean; onStop?: () => void; disabled?: boolean; autoFocus?: boolean; tall?: boolean; pickPersona?: boolean
+  placeholder: string; onSubmit: (text: string, files: Attachment[]) => void; busy?: boolean; onStop?: () => void; disabled?: boolean; autoFocus?: boolean; tall?: boolean; pickPersona?: boolean
   /** The model picker inside the box. Off in the main design's thread, where it sits under the box instead (ChatPage). */
   pickModel?: boolean
   seed?: { text: string; n: number }
@@ -47,10 +48,19 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
   // top, full width, the controls under it), like ChatGPT, and stays open until the text is sent or cleared.
   // One grid either way, so the textarea never remounts: the cursor and focus stay put.
   const [opened, setOpened] = useState(false)
-  const two = tall || opened
+  // Attached files (main design): a card each over the text; the box opens into its two rows to hold them.
+  const [files, setFiles] = useState<Attachment[]>([])
+  const two = tall || opened || files.length > 0
+  const addFiles = (list: File[]) => {
+    const added = list.map((f) => ({ id: `${f.name}-${f.size}-${Math.random().toString(36).slice(2, 7)}`, name: f.name, size: f.size, uploading: true }))
+    setFiles((fs) => [...fs, ...added])
+    // Each file "uploads" for a moment, then shows its type and size.
+    added.forEach((a, i) => window.setTimeout(() => setFiles((fs) => fs.map((f) => (f.id === a.id ? { ...f, uploading: false } : f))), 900 + i * 250))
+    ref.current?.focus()
+  }
   const ref = useRef<HTMLTextAreaElement>(null)
   const toast = useToast()
-  const ready = busy || (!disabled && !!text.trim())
+  const ready = busy || (!disabled && !!text.trim() && !files.some((f) => f.uploading))
   const grow = (el: HTMLTextAreaElement) => { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` }
   useLayoutEffect(() => { if (opened && ref.current) grow(ref.current) }, [opened]) // re-measure at the new width
   // A seeded question types in at a reading pace (about 0.6s whatever its length), holds a beat, then sends.
@@ -65,16 +75,17 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
       if (el) requestAnimationFrame(() => grow(el))
       if (i < seed.text.length) return
       clearInterval(iv)
-      t = window.setTimeout(() => { onSubmit(seed.text); setText(''); if (el) el.style.height = '' }, 350)
+      t = window.setTimeout(() => { onSubmit(seed.text, []); setText(''); if (el) el.style.height = '' }, 350)
     }, 22)
     return () => { clearInterval(iv); clearTimeout(t) }
   }, [seed?.n])
   const submit = (e?: FormEvent) => {
     e?.preventDefault()
     if (busy) return onStop?.()
-    if (disabled || !text.trim()) return
-    onSubmit(text.trim())
+    if (disabled || !text.trim() || files.some((f) => f.uploading)) return
+    onSubmit(text.trim(), files)
     setText('')
+    setFiles([])
     setOpened(false)
     onTyping?.(false)
     if (ref.current) ref.current.style.height = ''
@@ -88,7 +99,8 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
       onSubmit={submit}
       className={cn(
         'grid w-full grid-cols-[auto_1fr_auto] items-end gap-x-0.5 rounded-2xl bg-surface p-2.5 shadow-composer ring-1 ring-border transition-shadow focus-within:ring-brand-300 dark:focus-within:ring-brand-700',
-        two ? "gap-y-2 [grid-template-areas:'input_input_input'_'lead_._tools']" : "[grid-template-areas:'lead_input_tools']",
+        files.length ? "gap-y-2 [grid-template-areas:'files_files_files'_'input_input_input'_'lead_._tools']"
+          : two ? "gap-y-2 [grid-template-areas:'input_input_input'_'lead_._tools']" : "[grid-template-areas:'lead_input_tools']",
         // The main design's rim: a light that glides round the edge while the box is active (D23). The archive keeps the plain ring.
         VERSION === 'main' && 'composer-rim',
         className,
@@ -96,9 +108,16 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
     >
       <div className="flex items-center gap-0.5 [grid-area:lead]">
         {dock && <span className={cn('grid size-9 shrink-0 place-items-center', dock === 'in' ? 'animate-form' : 'animate-melt')}><Aura size={24} state="thinking" continues /></span>}
-        <button type="button" onClick={() => toast('Attachments aren’t part of this prototype')} className={iconBtn} aria-label="Attach"><Plus className="size-5" /></button>
+        {VERSION === 'main'
+          ? <AttachMenu below={tall} onFiles={addFiles} className={iconBtn} />
+          : <button type="button" onClick={() => toast('Attachments aren’t part of this prototype')} className={iconBtn} aria-label="Attach"><Plus className="size-5" /></button>}
         {pickPersona && <PersonaPicker />}
       </div>
+      {files.length > 0 && (
+        <div className="flex flex-wrap gap-2 [grid-area:files]">
+          {files.map((f) => <AttachmentCard key={f.id} file={f} onRemove={() => setFiles((fs) => fs.filter((x) => x.id !== f.id))} />)}
+        </div>
+      )}
       <textarea
         ref={ref}
         rows={tall ? 2 : 1}

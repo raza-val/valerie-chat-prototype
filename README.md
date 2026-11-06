@@ -32,6 +32,7 @@ npm run build      # type-check, then build to dist/
 - **Controls, top right.** Chats and New chat (+) share one capsule; View traces sits beside them. Both Chats and View traces open a sheet on the right. In Chats, a row can be deleted, with Undo in a toast. View traces is empty from Home; from a chat it lists the reply's steps and tool calls.
 - **Brie's briefs.** Milo (Data Analyst) gets answers in the thread. Brie (Content Strategist) gets a document instead: when her brief is written, the chat steps into a column on the left (480px) and the brief opens in a panel on the right, in one reading column. Drag the handle between them to resize (360px for the chat at least, 520px for the brief; double-click resets; the width is remembered). The panel's toolbar has Save as report and Close. Save as report is a switch: a click turns it into "Saved" with a tick (the label slides, the button eases to its new width, the tick draws in), and another click turns it back. The thread keeps Valerie's line and a card that reopens the document. The brief's text is the live product's, word for word (`src/data/briefs.ts`). Only "Find where Bespoke sits" has a brief so far; Brie's other questions get the usual answer.
 - **Errors.** An answer can stop at a step, with Retry. When the browser is offline, a strip above the composer says so.
+- **Attachments.** The composer's + opens a menu with "Upload a file" (images, screenshots, video, audio and links will join it later). A chosen file shows as a card in the composer, first uploading (a spinner), then its name, type and size, with a remove ×. Once sent, the card sits above the question in the thread. The prototype only shows the file; nothing is read or uploaded.
 - **Typed questions** are matched to the closest of the five answers. Anything else gets chips to pick one of them.
 
 ## States: Figma ↔ code
@@ -61,6 +62,11 @@ Each Figma screen and how to open the same state in code (`localhost:5173` or th
 | [19 · Brief · Resizing](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=221-6505) | the same, dragging the handle between the chat and the brief |
 | [20 · Brief · Closed](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=221-6852) | the same, then **Close** on the brief |
 | [21 · Brief · Full document](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=222-6983) | the same, scrolled through the brief |
+| [22 · Attach menu](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=230-7049) | `/chat/category-talk?state=answer`, then **+** in the composer |
+| [23 · File uploading](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=230-7417) | the same, then **Upload a file** and pick a file (the first second) |
+| [24 · File attached](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=230-7801) | the same, once it's in, with a question typed |
+| [25 · Home · File attached](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=230-8185) | `/`, then **+**, **Upload a file**, and a question typed |
+| [26 · File sent](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=230-8513) | send from Home: the chat opens with the file above the question |
 
 These states are in code but have no Figma screen:
 

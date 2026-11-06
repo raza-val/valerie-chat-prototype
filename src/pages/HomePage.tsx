@@ -4,6 +4,7 @@ import { ArrowUpRight, Compass, EyeOff, Gem, Globe, LayoutGrid, MessageSquare, T
 import { Aura, type AuraHandle } from '@/components/brand/Aura'
 import { ChatHeader } from '@/components/chat/ChatHeader'
 import { Composer } from '@/components/chat/Composer'
+import type { Attachment } from '@/components/chat/Attachments'
 import { homeStarters, matchPrompt, prompts, type Lens, type Starter, type StarterIcon } from '@/data/prompts'
 import { homeCopy, startersCopy, voiceCopy } from '@/data/ui'
 import { site } from '@/data/site'
@@ -52,7 +53,7 @@ let greeted = false
 export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
   const navigate = useNavigate()
   const [params] = useSearchParams()
-  const { startFlight } = useStore()
+  const { startFlight, setOutbox } = useStore()
   const hero = useRef<HTMLDivElement>(null)
   const [typing, setTyping] = useState(false)
   const go = (id: string, q?: string) => {
@@ -62,7 +63,7 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
     if (q) sp.set('q', q)
     navigate(`/chat/${id}?${sp.toString()}`)
   }
-  const ask = (text: string) => { const m = prompts.find((p) => p.question === text) ?? matchPrompt(text); go(m ? m.id : 'unknown', text) }
+  const ask = (text: string, files: Attachment[] = []) => { setOutbox(files); const m = prompts.find((p) => p.question === text) ?? matchPrompt(text); go(m ? m.id : 'unknown', text) }
   // v4: the picked question types itself into the composer, then sends; pointing at one previews it there.
   const [seed, setSeed] = useState<{ text: string; n: number }>()
   const [picked, setPicked] = useState<string>()

@@ -46,6 +46,17 @@ export const briefCopy = {
   resize: 'Resize the chat and the brief',
 }
 
+/** DRAFT: the composer's + menu and attached files (main design, 6 Nov). More kinds (images, screenshots, video, audio, links) join `upload` later. */
+export const attachCopy = {
+  /** the + button's and its menu's name */
+  label: 'Attach',
+  upload: 'Upload a file',
+  uploading: 'Uploading…',
+  remove: 'Remove',
+  /** a file with no extension */
+  file: 'File',
+}
+
 /** Long threads. `jump` is from the backlog brief. */
 export const threadCopy = {
   jump: 'Jump to latest',

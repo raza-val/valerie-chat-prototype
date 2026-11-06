@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { AnswerErrorView, AnswerView, WorkingView } from './AnswerView'
 import { BriefReply, briefFor } from './BriefView'
 import { UserBubble } from './UserBubble'
+import type { Attachment } from './Attachments'
 import type { Persona } from '@/data/personas'
 import type { Prompt } from '@/data/prompts'
 import { answers } from '@/data/answers'
@@ -25,13 +26,15 @@ export type TurnHandle = { stop: () => void }
  */
 export const Turn = forwardRef<TurnHandle, {
   prompt: Prompt; persona: Persona; mode: TurnMode
+  /** files sent with the question */
+  files?: Attachment[]
   onWorking?: (working: boolean) => void
   /** Only the latest turn offers follow-ups. */
   onFollowUp?: (text: string) => void
   /** A brief (Brie, main design): whether it's the document open beside the chat, and how to open it. Called once it's written. */
   docOpen?: boolean
   onDoc?: () => void
-}>(function Turn({ prompt, persona, mode: initial, onWorking, onFollowUp, docOpen = false, onDoc }, ref) {
+}>(function Turn({ prompt, persona, mode: initial, files, onWorking, onFollowUp, docOpen = false, onDoc }, ref) {
   const settled = initial === 'answer' || initial === 'chart-error'
   const [mode, setMode] = useState(initial)
   const [active, setActive] = useState(settled ? -1 : 0)
@@ -85,7 +88,7 @@ export const Turn = forwardRef<TurnHandle, {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-[720px]"><UserBubble text={prompt.question} /></div>
+      <div className="mx-auto w-full max-w-[720px]"><UserBubble text={prompt.question} files={files} /></div>
       <div className="mt-8">
         {failed ? (
           <AnswerErrorView prompt={prompt} persona={persona} failed={failedAt} onRetry={retryAnswer} />

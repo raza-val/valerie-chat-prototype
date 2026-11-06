@@ -185,6 +185,9 @@ if (ABSTRACT) {
 /** Very small matcher so typed questions still land on one of the five answers. */
 export function matchPrompt(text: string): Prompt | undefined {
   const t = text.toLowerCase()
+  // A starter's own question (typed or pasted) is that answer, before any keyword can claim it.
+  const exact = prompts.find((p) => p.question.toLowerCase() === t.trim())
+  if (exact) return exact
   const rules: [string, string[]][] = [
     ['hear-the-buyers', ['buyer', 'review', 'praise', 'complain', 'customer']],
     ['whitespace', ['whitespace', 'rival', 'doesn', 'gap', 'hold']],
