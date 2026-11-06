@@ -6,6 +6,7 @@ import { setSound, useSound } from '@/lib/sound'
 import { VERSION, VOICE } from '@/lib/aura'
 import { soundCopy } from '@/data/ui'
 import { cn } from '@/lib/cn'
+import { dsOutline } from '@/components/ui/Button'
 
 const ring = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40'
 const ink = 'text-muted-foreground transition-colors hover:text-foreground [&_svg]:size-[15px] [&_svg]:shrink-0'
@@ -15,7 +16,6 @@ const ink = 'text-muted-foreground transition-colors hover:text-foreground [&_sv
  * the label text-sm/leading-6_buttons/semibold in --primary. Button: 8px in, the label wrapped in 4px each side.
  */
 // Rounded fully (6 Nov, the user's call over the DS's 12px corners), with 12px each side of the Chats label's 4px wrap.
-const dsOutline = 'h-9 rounded-full border border-border bg-background text-primary transition-colors hover:bg-muted [&_svg]:size-4 [&_svg]:shrink-0'
 const dsIconButton = cn(dsOutline, 'grid w-9 place-items-center')
 
 /** The name of an icon-only button, shown under it on hover (after a beat) or keyboard focus. `end`: hug the right edge. */

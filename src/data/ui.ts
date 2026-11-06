@@ -92,6 +92,7 @@ export const versionsCopy = {
   current: { href: '/', label: 'Current design' },
   experiments: { href: '/exp', label: 'Aura experiments' },
   botExperiments: { href: '/exp/bot', label: 'Bot experiments' },
+  motionExperiments: { href: '/exp/motion', label: 'Emblem motion' },
 }
 
 /** The live product's View traces copy (6 Nov screenshots); used by the main design. */

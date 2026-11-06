@@ -15,8 +15,40 @@ const CY = 16
  * - Idle, Scan: a band of light reads down the face now and then. Otherwise it rests as it is.
  * - Thinking, Gyro: the two parts lift apart and spin against each other, then settle face-on.
  * - Speaking, Echo: outlines of the mark run out behind it with the voice, fading as they go, the farthest almost gone.
+ * `sequence` (the main design, 6 Nov): thinking runs four motions in turn instead of the rotation alone, each starting and
+ * ending face-on so they hand over cleanly: the rotation (3.4s), Orbit (2.8s), Split & snap (1.9s), Flip (1.5s), then again.
  */
-export function Hologram({ state, size, voice }: ExpProps) {
+const SEQ = { gyro: 3.4, orbit: 2.8, split: 1.9, flip: 1.5 }
+const CYCLE = SEQ.gyro + SEQ.orbit + SEQ.split + SEQ.flip
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
+const seg = (u: number, a: number, b: number) => clamp01((u - a) / (b - a))
+const easeOut = (x: number) => 1 - (1 - x) ** 3
+const easeInOut = (x: number) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2)
+const overshoot = (x: number) => { const s = 1.7; return 1 + (s + 1) * (x - 1) ** 3 + s * (x - 1) ** 2 }
+
+/** Where the thinking sequence is at `u` seconds into its cycle: each half's turn, the lean, the parting, the fan. */
+function sequenceAt(u: number) {
+  const o = { spin: 0, flip: 0, leanX: 0, leanY: 0, lift: 0, split: 0, fan: 0 }
+  if (u < SEQ.gyro) {
+    // The rotation: the two parts lift apart and turn once against each other, then close.
+    const x = u / SEQ.gyro
+    o.spin = 360 * easeInOut(x); o.lift = Math.sin(Math.PI * x); o.fan = Math.sin(Math.PI * x)
+  } else if ((u -= SEQ.gyro) < SEQ.orbit) {
+    // Orbit: one slow circle of lean, easing in and out of face-on.
+    const x = u / SEQ.orbit, e = Math.sin(Math.PI * x), a = Math.PI * 2 * x
+    o.leanX = e * 14 * Math.cos(a); o.leanY = e * 18 * Math.sin(a); o.fan = e * 0.5
+  } else if ((u -= SEQ.orbit) < SEQ.split) {
+    // Split & snap: apart, a beat, and back together past centre.
+    o.split = easeOut(seg(u, 0, 0.35)) * (1 - overshoot(seg(u, 0.6, 1.05))); o.fan = Math.max(0, o.split) * 0.6
+  } else {
+    // Flip: one clean turn together, fanning mid-turn.
+    const f = easeInOut(seg(u - SEQ.split, 0, 1.2))
+    o.flip = 360 * f; o.fan = Math.sin(Math.PI * f)
+  }
+  return o
+}
+
+export function Hologram({ state, size, voice, sequence = false }: ExpProps & { sequence?: boolean }) {
   const id = svgId(useId())
   const dark = useDark()
   const c = { 50: useCssVar('--brand-50'), 200: useCssVar('--brand-200'), 300: useCssVar('--brand-300'), 400: useCssVar('--brand-400'), 500: useCssVar('--brand-500'), 700: useCssVar('--brand-700') }
@@ -25,19 +57,28 @@ export function Hologram({ state, size, voice }: ExpProps) {
   const fronts = useRef<HTMLDivElement[]>([])
   const bands = useRef<SVGRectElement[]>([])
   const echoes = useRef<SVGGElement[]>([])
-  const clock = useRef({ spin: 0, wave: 0, scan: 0, speak: 0 })
+  const clock = useRef({ spin: 0, wave: 0, scan: 0, speak: 0, seq: 0, turn: [0, 0], on: false })
 
   useFrames(state, { idle: 1, thinking: 1, speaking: 1 }, ({ t, dt, think, level }) => {
     const k = clock.current
     // Gyro: spins only while thinking; settling, each part eases back to the nearest face-on turn.
     if (think > 0.5) k.spin += dt * think * 120
     else k.spin += (Math.round(k.spin / 360) * 360 - k.spin) * (1 - Math.exp(-dt * 3))
-    const lift = size * (think * 0.05 + level * 0.025)
-    const gap = size * (0.012 + think * 0.008 + level * 0.012)
+    // The main design's sequence: its clock runs only while thinking; leaving, each part settles to the nearest face-on turn.
+    if (sequence && think > 0.5) { if (!k.on) { k.on = true; k.seq = 0 } k.seq += dt } else k.on = false
+    const q = sequence ? sequenceAt(k.seq % CYCLE) : null
+    const lift = q ? size * (think * (0.05 * q.lift + 0.12 * q.split) + level * 0.025) : size * (think * 0.05 + level * 0.025)
+    const gap = size * (0.012 + think * 0.008 + level * 0.012 + (q ? think * 0.014 * q.fan : 0))
     const front = (LAYERS - 1) / 2 * gap
     halves.current.forEach((h, p) => {
       const dir = p === 0 ? 1 : -1
-      h.style.transform = `translateY(${(-dir * lift).toFixed(2)}px) rotateX(${(12 + think * 8).toFixed(2)}deg) rotateY(${(-10 + Math.sin(t * 0.25) * 3 + dir * k.spin).toFixed(2)}deg)`
+      let turn = dir * k.spin, lx = 0, ly = 0
+      if (q) {
+        if (think > 0.5) k.turn[p] = dir * q.spin + q.flip
+        else k.turn[p] += (Math.round(k.turn[p] / 360) * 360 - k.turn[p]) * (1 - Math.exp(-dt * 3))
+        turn = k.turn[p]; lx = q.leanX * think; ly = q.leanY * think
+      }
+      h.style.transform = `translateY(${(-dir * lift).toFixed(2)}px) rotateX(${(12 + think * 8 + lx).toFixed(2)}deg) rotateY(${(-10 + Math.sin(t * 0.25) * 3 + ly + turn).toFixed(2)}deg)`
       layers.current[p].forEach((el, i) => { el.style.transform = `translateZ(${((i - (LAYERS - 1) / 2) * gap).toFixed(2)}px)` })
       if (fronts.current[p]) fronts.current[p].style.transform = `translateZ(${(front + 0.5).toFixed(2)}px)`
     })

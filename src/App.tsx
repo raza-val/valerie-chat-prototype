@@ -12,6 +12,7 @@ import { VersionsPage } from '@/pages/VersionsPage'
 const LabPage = lazy(() => import('@/pages/LabPage').then((m) => ({ default: m.LabPage })))
 const ExpPage = lazy(() => import('@/pages/ExpPage').then((m) => ({ default: m.ExpPage })))
 const BotExpPage = lazy(() => import('@/pages/BotExpPage').then((m) => ({ default: m.BotExpPage })))
+const MotionExpPage = lazy(() => import('@/pages/MotionExpPage').then((m) => ({ default: m.MotionExpPage })))
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/lab" element={<Suspense fallback={null}><LabPage /></Suspense>} />
       <Route path="/exp" element={<Suspense fallback={null}><ExpPage /></Suspense>} />
       <Route path="/exp/bot" element={<Suspense fallback={null}><BotExpPage /></Suspense>} />
+      <Route path="/exp/motion" element={<Suspense fallback={null}><MotionExpPage /></Suspense>} />
       <Route path="*" element={<Product />} />
     </Routes>
   )

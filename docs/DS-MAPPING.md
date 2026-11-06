@@ -39,7 +39,7 @@ All colours come from tokens that already match the DS: `--primary` #1e293b, `--
 | `var(--radius)` | 24 | cards (Market Briefing Card) |
 | `rounded-full` | ∞ | avatars, dots |
 
-Off-scale in code: `rounded-md` 6 (tooltip, badge, menu items) ✗ · `rounded-lg` 8 on buttons (composer +, mic, send, model and persona triggers, ghost actions) ✗, should be 12 · `rounded-2xl` 16 (composer, user bubble) — · `rounded-full` on the follow-up chips ✗.
+Off-scale in code: `rounded-md` 6 (tooltip, badge, menu items) ✗ · `rounded-lg` 8 on buttons (composer +, mic, send, model and persona triggers, ghost actions) ✗, should be 12 · `rounded-2xl` 16 (composer, user bubble) — · `rounded-full` on the follow-up chips and header controls: the user's choice over 12.
 
 ### Shadows
 
@@ -70,7 +70,7 @@ Lucide throughout, as in the DS. The DS draws them at **16px**; code uses 15px i
 | Answer header (steps toggle) | ghost text button, 32px, 8 corners | Button, ghost, sm | ≈ |
 | Open full trace | ghost Button, 14/20 | Button, ghost (Figma 138:1329) | ≈ 14/24, 12 corners |
 | Copy, up, down, regenerate | ghost icon, 28px, 15px icons, 8 corners | Icon Button, ghost, 28 (6px padding, 16px icon) | ≈ |
-| Follow-up chips | pill (full round), regular weight | **Button, outline** (Figma 140:1592) | ✗ |
+| Follow-up chips (and the unknown-question chips) | Button, outline (6 Nov): 36px, 1px border, 14/24 semibold `--primary`, 16px in, hover `--muted`; fully rounded like the header controls | **Button, outline** (Figma 140:1592) | ≈ round by choice |
 | Chart cards | Market Briefing Card | Market Briefing Card | ✓ |
 | Persona / model divider | hairlines + 12px text | Separator | ✓ |
 | User bubble | 16 corners with a 6 tail, hairline | — | — ours |
@@ -87,7 +87,7 @@ Lucide throughout, as in the DS. The DS draws them at **16px**; code uses 15px i
 
 ## Order of work
 
-1. **Buttons everywhere (main):** composer icons and send, model and persona triggers, answer actions, Open full trace and the follow-up chips onto Button / Icon Button (12 corners, 14/24 semibold, 16px icons).
+1. **Buttons everywhere (main):** composer icons and send, model and persona triggers, answer actions and Open full trace onto Button / Icon Button (12 corners, 14/24 semibold, 16px icons).
 2. **Small type fixes:** persona role 11 → 12, composer tracking → 0.
 3. **With the library file:** confirm Tooltip, Toast, Sheet, Dropdown Menu, Card, Badge, Avatar, Textarea, Skeleton, then align them.
 4. **Keep as ours, logged:** Aura, the composer box and rim, the user bubble, the offline tray.

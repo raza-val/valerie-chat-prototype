@@ -1,5 +1,5 @@
 import { forwardRef, lazy, Suspense, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
-import { ABSTRACT, AURA_FORM, AURA_SHAPE, CHROME_TINT, chromePresets, hasWebGL, liveStates, type AuraState } from '@/lib/aura'
+import { ABSTRACT, AURA_FORM, VERSION, AURA_SHAPE, CHROME_TINT, chromePresets, hasWebGL, liveStates, type AuraState } from '@/lib/aura'
 import { Hologram } from '@/components/exp/Hologram'
 import { MarkOrb } from '@/components/exp/MarkOrb'
 import type { ExpState } from '@/components/exp/motion'
@@ -107,6 +107,7 @@ const Form = forwardRef<AuraHandle, { state: AuraState; size: number }>(function
   const voice = useRef(0)
   useImperativeHandle(ref, () => ({ level: (v: number) => { voice.current = v } }), [])
   if (AURA_FORM === 'solid') return <Suspense fallback={<span className="block" style={{ width: size, height: size }} />}><SolidAcrylic state={expState(state)} size={size} voice={voice} /></Suspense>
-  const C = AURA_FORM === 'markorb' ? MarkOrb : Hologram
-  return <C state={expState(state)} size={size} voice={voice} />
+  if (AURA_FORM === 'markorb') return <MarkOrb state={expState(state)} size={size} voice={voice} />
+  // The main design thinks in a sequence (rotation, Orbit, Split & snap, Flip); archived v4 keeps the rotation alone.
+  return <Hologram state={expState(state)} size={size} voice={voice} sequence={VERSION === 'main'} />
 })

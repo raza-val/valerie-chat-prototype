@@ -11,7 +11,7 @@ import { answers } from '@/data/answers'
 import type { Persona } from '@/data/personas'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
-import { ABSTRACT, VOICE } from '@/lib/aura'
+import { ABSTRACT, VERSION, VOICE } from '@/lib/aura'
 import { WORD_MS, streamMs } from '@/lib/motion'
 import { canPlay, play, soundOn } from '@/lib/sound'
 import { line, playClip, saidBy, wordTimes } from '@/lib/voice'
@@ -144,7 +144,7 @@ export function AnswerView({ prompt, persona, stream = false, chartReady = true,
             <>
               <p className="mt-6 text-sm text-muted-foreground">{followUpOffer}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {prompt.followUps.map((f) => <Button key={f} variant="chip" onClick={() => onFollowUp(f)}>{f}</Button>)}
+                {prompt.followUps.map((f) => <Button key={f} variant={VERSION === 'main' ? 'ds' : 'chip'} onClick={() => onFollowUp(f)}>{f}</Button>)}
               </div>
             </>
           )}

@@ -49,7 +49,7 @@ export function VersionsPage() {
           ))}
         </div>
         <div className="mt-6 flex gap-6">
-          {[versionsCopy.current, versionsCopy.experiments, versionsCopy.botExperiments].map((l) => (
+          {[versionsCopy.current, versionsCopy.experiments, versionsCopy.botExperiments, versionsCopy.motionExperiments].map((l) => (
             <a key={l.href} href={l.href} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground">
               {l.label} <ArrowRight className="size-3.5" />
             </a>

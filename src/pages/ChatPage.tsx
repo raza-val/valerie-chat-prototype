@@ -17,6 +17,7 @@ import { useOffline } from '@/lib/useOnline'
 import { OfflineStrip } from '@/components/chat/OfflineStrip'
 import { play } from '@/lib/sound'
 import { cn } from '@/lib/cn'
+import { VERSION } from '@/lib/aura'
 
 /**
  * One conversation: a thread of turns (question → answer). The first turn is the chat id;
@@ -170,7 +171,7 @@ function Unknown({ onPick }: { onPick: (id: string) => void }) {
       <Aura size={28} seat />
       <p className="mt-4 text-base leading-[26px]">{unknownCopy.lead}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        {prompts.map((p) => <Button key={p.id} variant="chip" onClick={() => onPick(p.id)}>{p.title}</Button>)}
+        {prompts.map((p) => <Button key={p.id} variant={VERSION === 'main' ? 'ds' : 'chip'} onClick={() => onPick(p.id)}>{p.title}</Button>)}
       </div>
     </div>
   )
