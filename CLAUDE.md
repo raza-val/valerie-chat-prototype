@@ -40,7 +40,7 @@ The four versions leadership compared, **v1–v4**, are archived, each a whole p
 
 | URL | Aura | Home | While working |
 |---|---|---|---|
-| `/` (main) | **Hologram** | v1's question cards under the composer, two to a row | the abstract flow |
+| `/` (main) | **Hologram** | Aura beside the headline; v1's question cards under the composer, two to a row | the abstract flow |
 | `/archive/v1/…` | **Solid acrylic** (from `/exp/bot`: the mark as two thick pieces of clear blue acrylic, 3D; `exp/bot/Solid.tsx`, three.js, loaded only in v1) | question cards under the composer, two to a row | the abstract flow (B below) |
 | `/archive/v2/…` | **Constellation** (old `/constellation/…` links forward here) | lens tabs, full questions | the abstract flow |
 | `/archive/v3/…` | **Mark orb** (Figma "Orb" 122:36999: the white mark on a navy sphere; `exp/MarkOrb.tsx`; v1 until 28 Oct) | the same cards under the composer | the abstract flow |
@@ -67,7 +67,9 @@ Leadership passed on the chrome hexagon and the cloud (28 Oct): no human structu
 
 ## Home layouts
 
-Each version has one Home (`HomePage layout=…`, picked in `App.tsx`). The main design (`/`) uses v1's `pairs`; archived v2 the lens tabs; v1, v3 and v4:
+Each version has one Home (`HomePage layout=…`, picked in `App.tsx`). Archived v2 uses the lens tabs; the others:
+
+- **Main** (`main`, `/`, 6 Nov): the headline is one line in one colour (DS "text-4xl (web only)/leading-10/semibold": 36/40, -2.5%), with Aura inline before it as Claude's mark sits before its greeting (68px box, about 45px of ink, a little taller than the line and centred on it; 10px gap, which reads as about 14 because its arms end in points), the pair centred in the column on its ink; 32px above the composer; the cards under the composer two to a row as in v1. Six suggested questions in the live product's order and wording, its client's name swapped for Bespoke (`homeStarters` and `liveWording` in `prompts.ts`, main only; the card, the thread's question and the traces all read them): five open their answers, "Check the growth numbers" has no answer design yet, so its card shows but can't be picked. Two lines (ink, then a smaller grey line) were tried and read unbalanced next to how every assistant greets. The group sits a little above the middle of the window. Active, the composer (Home and the thread, main only) gets a rim: the hairline settles to pale navy with a soft halo, and on arrival only a soft light sweeps once round it (1.2s) and fades; nothing moves while typing (a light circling every 7s distracted, 6 Nov) (`.composer-rim` in `index.css`, D23); the archive keeps the plain ring.
 
 - **v4** (`side`, the Hologram; archived v4 only, main uses `pairs`): Aura beside the headline (not above it) and the composer on the left, the questions stacked as white cards (360px wide) on the right under "Suggested questions". Both columns start on one line: Aura, the headline and the "Suggested questions" heading share their top edge (the Hologram nudged up 16px, as far as its mark sits inside its box); the space under the composer is left open.
 - (A left side panel opened from the composer, was tried and removed on 27 Oct.)

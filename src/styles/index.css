@@ -256,3 +256,54 @@
   animation: text-glare 1.6s ease-in-out infinite;
 }
 @keyframes text-glare { 0% { background-position: 100% 0; } 62%, 100% { background-position: 0% 0; } }
+
+/* ── Beyond the DS: the composer's rim (D23), main design only ──
+   Active, the hairline settles to a pale navy with a soft halo. On arrival only, one soft light sweeps once round the
+   rim (1.2s, from the left where the cursor is) and fades as it lands; then nothing moves while you type.
+   Brand tokens only; no sweep when motion is reduced. */
+@property --rim-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 270deg;
+}
+.composer-rim { position: relative; transition: box-shadow 0.5s ease; }
+.composer-rim:focus-within {
+  box-shadow: 0 0 0 1px var(--brand-200), 0 0 0 4px color-mix(in srgb, var(--brand-500) 8%, transparent), var(--shadow-composer);
+}
+.dark .composer-rim:focus-within {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-800) 60%, transparent), 0 0 0 4px color-mix(in srgb, var(--brand-400) 10%, transparent), var(--shadow-composer);
+}
+.composer-rim::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--rim-angle),
+    transparent 0turn, transparent 0.62turn,
+    color-mix(in srgb, var(--brand-300) 55%, transparent) 0.8turn,
+    var(--brand-500) 0.95turn, var(--brand-700) 0.985turn, transparent 1turn);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+}
+.dark .composer-rim::before {
+  background: conic-gradient(from var(--rim-angle),
+    transparent 0turn, transparent 0.62turn,
+    color-mix(in srgb, var(--brand-400) 45%, transparent) 0.8turn,
+    var(--brand-300) 0.95turn, var(--brand-100) 0.985turn, transparent 1turn);
+}
+.composer-rim:focus-within::before {
+  animation: rim-arrive 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes rim-arrive {
+  0% { --rim-angle: 270deg; opacity: 0; }
+  20% { opacity: 0.85; }
+  100% { --rim-angle: 630deg; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .composer-rim:focus-within::before { animation: none; }
+}

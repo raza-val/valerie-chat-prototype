@@ -5,7 +5,7 @@
  * - Numbers here have been changed from the Figma / live data. Every change is
  *   listed in docs/DATA.md. If you change a number, change it in the chart file too.
  */
-import { ABSTRACT } from '@/lib/aura'
+import { ABSTRACT, VERSION } from '@/lib/aura'
 import { totalSeconds } from '@/lib/format'
 
 export type ChartId = 'topicShare' | 'brandStrength' | 'reviewSources' | 'leavesOut' | 'purchaseDrivers'
@@ -137,6 +137,32 @@ export const prompts: Prompt[] = [
 ]
 
 export const getPrompt = (id?: string) => prompts.find((p) => p.id === id)
+
+/**
+ * The main design (6 Nov) uses the live product's wording for the starters, its client's name swapped for Bespoke.
+ * The card, the question in the thread and the traces all read it from here. The archive keeps the wording above.
+ */
+const liveWording: Record<string, Pick<Prompt, 'title' | 'question'>> = {
+  'category-talk': { title: 'See what the category talks about', question: 'What does the skincare conversation talk about, and which topics are gaining share?' },
+  'where-bespoke-sits': { title: 'Find where Bespoke sits', question: 'Where does Bespoke sit against its peer set on brand strength and customer satisfaction?' },
+  'what-cant-be-measured': { title: 'Show what can be measured', question: 'Which of our shortlisted competitors can be measured, and on which data?' },
+  whitespace: { title: 'Find unclaimed topics', question: "Which topics do Bespoke's rivals hold that Bespoke doesn't, and how is each one trending?" },
+  'hear-the-buyers': { title: 'Hear it from the buyers', question: 'What do buyers praise and complain about after purchase, in their own words?' },
+}
+if (VERSION === 'main') prompts.forEach((p) => Object.assign(p, liveWording[p.id]))
+
+/** A suggested question on Home. One without an `id` has no answer yet: it shows, but can't be picked. */
+export type Starter = Pick<Prompt, 'title' | 'question' | 'icon'> & { id?: string }
+
+/** The main design's six suggested questions, in the live product's order. The growth numbers have no answer design yet (removed 27 Oct). */
+export const homeStarters: Starter[] = [
+  getPrompt('category-talk')!,
+  getPrompt('where-bespoke-sits')!,
+  getPrompt('what-cant-be-measured')!,
+  getPrompt('whitespace')!,
+  { title: 'Check the growth numbers', question: 'Which topics have a growth figure that their own trend pattern does not call a trend?', icon: 'trendingUp' },
+  getPrompt('hear-the-buyers')!,
+]
 
 /**
  * v1–v4 wait longer, about 20s (19–21s), so Aura has time to change form the way a slow real reply does.

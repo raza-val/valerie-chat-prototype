@@ -4,7 +4,7 @@ import { ArrowUpRight, Compass, EyeOff, Gem, Globe, LayoutGrid, MessageSquare, T
 import { Aura, type AuraHandle } from '@/components/brand/Aura'
 import { ChatHeader } from '@/components/chat/ChatHeader'
 import { Composer } from '@/components/chat/Composer'
-import { matchPrompt, prompts, type Lens, type Prompt, type StarterIcon } from '@/data/prompts'
+import { homeStarters, matchPrompt, prompts, type Lens, type Starter, type StarterIcon } from '@/data/prompts'
 import { homeCopy, startersCopy, voiceCopy } from '@/data/ui'
 import { site } from '@/data/site'
 import { OfflineStrip } from '@/components/chat/OfflineStrip'
@@ -35,8 +35,10 @@ const icons: Record<StarterIcon, typeof Globe> = { tag: Tag, telescope: Telescop
  *   at a question previews it in the composer, and picking it types it in and sends.
  * - `below` (/v3): the same cards and behaviour as `side`, stacked under the composer at its width.
  * - `pairs` (/v1): the same cards under the composer, two to a row; an odd last card takes the whole row.
+ * - `main` (/, since 6 Nov): `pairs`, with Aura beside the headline as in `side`: the whole group starts on the composer's
+ *   left edge and sits in the middle of the window.
  */
-export type HomeLayout = 'tabs' | 'side' | 'below' | 'pairs'
+export type HomeLayout = 'tabs' | 'side' | 'below' | 'pairs' | 'main'
 
 /** Aura greets once per visit, the first time Home shows with sound on. */
 let greeted = false
@@ -65,10 +67,10 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
   const [seed, setSeed] = useState<{ text: string; n: number }>()
   const [picked, setPicked] = useState<string>()
   const [preview, setPreview] = useState<string>()
-  const fill = (p: Prompt) => { setPicked(p.id); setPreview(undefined); setSeed({ text: p.question, n: Date.now() }) }
+  const fill = (p: Starter) => { setPicked(p.id); setPreview(undefined); setSeed({ text: p.question, n: Date.now() }) }
   const { offline, reconnect } = useOffline()
   const words = site.tagline.split(' ')
-  const split = site.tagline.split(', ')[0].split(' ').length // the first clause is ink, the rest grey
+  const split = site.tagline.split(/(?<=[,?]) /)[0].split(' ').length // the first clause (to the comma or question mark) is ink, the rest grey
 
   const aura = useRef<AuraHandle>(null)
   const [said, setSaid] = useState<number | null>(null) // words said so far, while Aura says the headline
@@ -90,35 +92,43 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
   }, [sound])
   useEffect(() => { void line('tagline'); return () => hush.current?.() }, []) // fetch the greeting early; it's small
 
-  // v4 sets Aura beside the headline, both on the left, so the column starts level with the questions.
-  const beside = layout === 'side'
+  // v4 and the main design set Aura beside the headline, both on the left: one left edge down the page.
+  const beside = layout === 'side' || layout === 'main'
+  /** One word of the headline: ink in the first clause, grey after it (main: all ink, one line), and grey-faint until it's said. */
+  const word = (w: string, i: number) => (
+    <Fragment key={i}>
+      <span aria-hidden className={cn('transition-colors duration-150', said !== null && i >= said ? 'text-muted-foreground/45' : i < split || layout === 'main' ? 'text-foreground' : 'text-muted-foreground')}>{w}</span>
+      {i < words.length - 1 && (layout === 'main' || i !== split - 1) && ' '}
+    </Fragment>
+  )
   const intro = (
     <>
-      <div className={cn('flex', beside ? 'w-full items-start gap-6' : 'flex-col items-center')}>
-        {/* Beside the headline (v4, the Hologram), Aura rises 16px: the mark sits that far inside its box (it tilts ±2px), and the ink should start level with the text. */}
-        <div ref={hero} className={cn('flex shrink-0 animate-rise', beside && '-mt-4')}>
-          <Aura ref={aura} size={112} live state={typing ? 'listening' : said !== null ? 'speaking' : 'idle'} onTap={() => (said !== null ? hush.current?.() : greet())} label={said !== null ? voiceCopy.stop : VOICE ? voiceCopy.listen : voiceCopy.replay} />
+      {/* Main: one line, Aura inline before it (as Claude's mark sits before its greeting), the pair centred in the column. */}
+      <div className={cn('flex', layout === 'main' ? 'w-full items-center justify-center gap-2.5' : beside ? 'w-full items-start gap-6' : 'flex-col items-center')}>
+        {/* Beside the headline (v4, the Hologram), Aura rises 16px: the mark sits that far inside its box (it tilts ±2px), and the ink should start level with the text.
+            Main: Aura a little taller than the line (68px box, about 45px of ink), centred on it. The box gives back 14px top and bottom
+            (it takes the line's 40px) and 5px on the left, where the mark sits inside it, so the pair is centred on its ink.
+            Its arms end in points, so 10px reads as the gap. */}
+        <div ref={hero} className={cn('flex shrink-0 animate-rise', layout === 'main' ? '-my-[14px] -ml-[5px]' : beside && '-mt-4')}>
+          <Aura ref={aura} size={layout === 'main' ? 68 : 112} live state={typing ? 'listening' : said !== null ? 'speaking' : 'idle'} onTap={() => (said !== null ? hush.current?.() : greet())} label={said !== null ? voiceCopy.stop : VOICE ? voiceCopy.listen : voiceCopy.replay} />
         </div>
         <div className={cn('flex flex-col', beside ? 'items-start' : 'items-center')}>
-          <h1 aria-label={site.tagline} className={cn('animate-rise text-[36px] font-semibold leading-[42px] tracking-[-0.03em] [animation-delay:60ms]', beside ? 'text-left' : 'mt-6 text-center')}>
-            {words.map((w, i) => (
-              <Fragment key={i}>
-                {i === split && <br />}
-                <span aria-hidden className={cn('transition-colors duration-150', said !== null && i >= said ? 'text-muted-foreground/45' : i < split ? 'text-foreground' : 'text-muted-foreground')}>{w}</span>
-                {i < words.length - 1 && i !== split - 1 && ' '}
-              </Fragment>
-            ))}
+          {/* Main follows the DS style "text-4xl (web only)/leading-10/semibold": 36/40, letter spacing -2.5%. The archive keeps 36/42 at -3%. */}
+          <h1 aria-label={site.tagline} className={cn('animate-rise text-[36px] font-semibold [animation-delay:60ms]', layout === 'main' ? 'whitespace-nowrap leading-10 tracking-[-0.025em]' : 'leading-[42px] tracking-[-0.03em]', beside ? 'text-left' : 'mt-6 text-center')}>
+            {/* Main: one line, one colour, like every assistant's greeting. The archive keeps two lines, ink then grey. */}
+            {layout === 'main' ? words.map((w, i) => word(w, i)) : words.map((w, i) => <Fragment key={i}>{i === split && <br />}{word(w, i)}</Fragment>)}
           </h1>
         </div>
       </div>
       {/* Above the questions below it, so the composer's menus open over them. */}
-      <div className="relative z-20 mt-10 w-full animate-rise [animation-delay:180ms]">
+      {/* Main: 32px from the headline, so it reads as the composer's title. */}
+      <div className={cn('relative z-20 w-full animate-rise [animation-delay:180ms]', layout === 'main' ? 'mt-8' : 'mt-10')}>
         <Composer tall pickPersona placeholder={preview ?? site.placeholder} onSubmit={ask} disabled={offline} onTyping={setTyping} seed={seed} className="relative z-10" />
         {offline && <OfflineStrip onRetry={reconnect} />}
       </div>
     </>
   )
-  const hover = (p?: Prompt) => setPreview(p && !seed ? p.question : undefined)
+  const hover = (p?: Starter) => setPreview(p && !seed ? p.question : undefined)
 
   if (layout === 'side') return (
     <div data-canvas className="relative flex h-full flex-col overflow-y-auto bg-canvas">
@@ -134,11 +144,12 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
   return (
     <div data-canvas className="relative flex h-full flex-col overflow-y-auto bg-canvas">
       <ChatHeader />
-      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-16">
+      {/* Main sits a little above the middle (optical centre): 16px more under it than over it. */}
+      <div className={cn('flex flex-1 flex-col items-center justify-center px-6', layout === 'main' ? 'pb-20' : 'pb-16')}>
         <div className="flex w-full max-w-[756px] flex-col items-center">
           {intro}
-          {layout === 'below' || layout === 'pairs'
-            ? <SuggestionStack below pairs={layout === 'pairs'} picked={picked} onPick={fill} onHover={hover} disabled={offline} />
+          {layout === 'below' || layout === 'pairs' || layout === 'main'
+            ? <SuggestionStack below pairs={layout !== 'below'} items={layout === 'main' ? homeStarters : starters} picked={picked} onPick={fill} onHover={hover} disabled={offline} />
             : <Starters onPick={go} disabled={offline} />}
         </div>
       </div>
@@ -147,13 +158,26 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
 }
 
 /** The question's icon in a quiet round chip (v4's suggestion cards). */
-function IconChip({ p, className }: { p: Prompt; className?: string }) {
+function IconChip({ p, className }: { p: Starter; className?: string }) {
   const Icon = icons[p.icon]
   return <span className={cn('grid size-8 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground [&_svg]:size-4', className)}><Icon /></span>
 }
 
-/** One suggested question beside the composer (v4): icon, title, and the question in full, in grey. */
-function Suggestion({ p, picked, onPick, onHover, disabled }: { p: Prompt; picked?: string; onPick: (p: Prompt) => void; onHover: (p?: Prompt) => void; disabled: boolean }) {
+/**
+ * One suggested question beside the composer (v4): icon, title, and the question in full, in grey.
+ * A question with no answer yet (no `id`) is the same card, still: no hover, nothing to pick.
+ */
+function Suggestion({ p, picked, onPick, onHover, disabled }: { p: Starter; picked?: string; onPick: (p: Starter) => void; onHover: (p?: Starter) => void; disabled: boolean }) {
+  const body = (
+    <>
+      <IconChip p={p} />
+      <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="text-sm font-semibold leading-5 text-foreground">{p.title}</span>
+        <span className="text-sm leading-5 text-muted-foreground">{p.question}</span>
+      </span>
+    </>
+  )
+  if (!p.id) return <div aria-disabled className={cn('flex size-full items-start gap-3 rounded-xl bg-surface p-3 text-left shadow-hairline transition-opacity', picked && 'opacity-50')}>{body}</div>
   return (
     <button
       onClick={() => onPick(p)}
@@ -169,11 +193,7 @@ function Suggestion({ p, picked, onPick, onHover, disabled }: { p: Prompt; picke
         picked && picked !== p.id && 'opacity-50',
       )}
     >
-      <IconChip p={p} />
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-sm font-semibold leading-5 text-foreground">{p.title}</span>
-        <span className="text-sm leading-5 text-muted-foreground">{p.question}</span>
-      </span>
+      {body}
     </button>
   )
 }
@@ -182,12 +202,12 @@ function Suggestion({ p, picked, onPick, onHover, disabled }: { p: Prompt; picke
  * The questions as white cards: stacked beside the composer, on the right (v4); under it at its full width (v3, `below`);
  * or under it two to a row (v1, `pairs`), the cards in a row the same height, an odd last one across the whole row.
  */
-function SuggestionStack({ below, pairs, ...props }: { below?: boolean; pairs?: boolean; picked?: string; onPick: (p: Prompt) => void; onHover: (p?: Prompt) => void; disabled: boolean }) {
+function SuggestionStack({ below, pairs, items = starters, ...props }: { below?: boolean; pairs?: boolean; items?: Starter[]; picked?: string; onPick: (p: Starter) => void; onHover: (p?: Starter) => void; disabled: boolean }) {
   return (
     <aside className={cn('shrink-0 animate-rise [animation-delay:240ms]', pairs ? 'grid grid-cols-2 gap-2' : 'flex flex-col gap-2', below ? 'mt-8 w-full' : 'w-[360px]')} aria-label={homeCopy.suggestions}>
       <p className={cn('px-1 pb-1 text-sm font-semibold text-muted-foreground', pairs && 'col-span-2')}>{homeCopy.suggestions}</p>
-      {starters.map((p, i) => (
-        <div key={p.id} className={cn(pairs && i === starters.length - 1 && starters.length % 2 === 1 && 'col-span-2')}>
+      {items.map((p, i) => (
+        <div key={p.id ?? p.title} className={cn(pairs && i === items.length - 1 && items.length % 2 === 1 && 'col-span-2')}>
           <Suggestion p={p} {...props} />
         </div>
       ))}

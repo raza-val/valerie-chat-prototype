@@ -3,7 +3,7 @@ import { ArrowUp, Mic, Plus, Square } from 'lucide-react'
 import { PersonaPicker } from './PersonaPicker'
 import { ModelPicker } from './ModelPicker'
 import { Aura } from '@/components/brand/Aura'
-import { MORPH_MS } from '@/lib/aura'
+import { MORPH_MS, VERSION } from '@/lib/aura'
 import { useToast } from '@/components/ui/Toast'
 import { cn } from '@/lib/cn'
 
@@ -83,6 +83,8 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
       className={cn(
         'grid w-full grid-cols-[auto_1fr_auto] items-end gap-x-0.5 rounded-2xl bg-surface p-2.5 shadow-composer ring-1 ring-border transition-shadow focus-within:ring-brand-300 dark:focus-within:ring-brand-700',
         two ? "gap-y-2 [grid-template-areas:'input_input_input'_'lead_._tools']" : "[grid-template-areas:'lead_input_tools']",
+        // The main design's rim: a light that glides round the edge while the box is active (D23). The archive keeps the plain ring.
+        VERSION === 'main' && 'composer-rim',
         className,
       )}
     >

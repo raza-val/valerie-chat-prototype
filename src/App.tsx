@@ -25,8 +25,8 @@ export default function App() {
   )
 }
 
-/** Each version's Home: main and archived v1 the question cards under the composer, two to a row; v3 one to a row; v4 beside the composer; v2 the lens tabs. */
-const layout: HomeLayout = ({ main: 'pairs', v1: 'pairs', v2: 'tabs', v3: 'below', v4: 'side' } as const)[VERSION]
+/** Each version's Home: main Aura beside the headline and the cards under the composer, two to a row; archived v1 the same cards under a centred Aura; v3 one to a row; v4 beside the composer; v2 the lens tabs. */
+const layout: HomeLayout = ({ main: 'main', v1: 'pairs', v2: 'tabs', v3: 'below', v4: 'side' } as const)[VERSION]
 
 function Product() {
   return (

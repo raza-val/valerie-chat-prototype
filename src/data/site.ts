@@ -13,6 +13,6 @@ export const site = {
     { value: '12', label: 'quarters' },
     { value: '41,836', label: 'posts' },
   ],
-  tagline: 'You bring the question, I’ll bring the answer.',
+  tagline: 'What are we exploring today?',
   placeholder: 'Ask anything about the skincare category and Bespoke’s position…',
 }
