@@ -11,11 +11,12 @@ import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { getPrompt, matchPrompt, prompts, type Prompt } from '@/data/prompts'
 import { personas, type Persona } from '@/data/personas'
-import { disclaimerCopy, threadCopy, unknownCopy, type Model } from '@/data/ui'
+import { threadCopy, unknownCopy, type Model } from '@/data/ui'
 import { useStore } from '@/lib/store'
 import { useOffline } from '@/lib/useOnline'
 import { OfflineStrip } from '@/components/chat/OfflineStrip'
 import { ModelPicker } from '@/components/chat/ModelPicker'
+import { PersonaPicker } from '@/components/chat/PersonaPicker'
 import { play } from '@/lib/sound'
 import { cn } from '@/lib/cn'
 import { VERSION } from '@/lib/aura'
@@ -148,11 +149,12 @@ function ChatThread() {
           <div className="relative before:absolute before:inset-x-0 before:top-7 before:-bottom-6 before:bg-canvas [&>*]:relative">
             <Composer placeholder="Ask a follow-up…" onSubmit={ask} busy={!!prompt && working} onStop={() => latestRef.current?.stop()} disabled={offline} docked={working && seatHidden} pickModel={VERSION !== 'main'} className="z-10" />
             {offline && <OfflineStrip onRetry={reconnect} />}
-            {/* Main design (6 Nov): the model sits under the box, right-aligned, as Claude does, so it never takes width from the text. */}
-            {/* The disclaimer on the left balances it; both sit on the 720 text column's edges (DS text-xs, muted). */}
+            {/* Main design (6 Nov): under the box, the persona switch on the left and the model on the right, as Claude does, so
+                neither takes width from the text. Avatar and chevron sit on the 720 text column's edges. Switching either mid-chat
+                adds a "Now tuned for" / "Now answering with" divider. */}
             {VERSION === 'main' && (
-              <div className="mt-1.5 flex items-center justify-between pl-[18px] pr-2.5">
-                <p className="text-xs leading-4 text-muted-foreground">{disclaimerCopy.text}</p>
+              <div className="mt-1.5 flex items-center justify-between pl-3 pr-2.5">
+                <PersonaPicker compact />
                 <ModelPicker compact />
               </div>
             )}

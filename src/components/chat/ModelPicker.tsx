@@ -3,6 +3,12 @@ import { Check, ChevronDown } from 'lucide-react'
 import { modelCopy } from '@/data/ui'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
+import { VERSION } from '@/lib/aura'
+
+/** A menu's heading (main design, 6 Nov): DS text-xs semibold, muted, on the items' left edge. Only in the open menu. */
+export function MenuTitle({ children }: { children: React.ReactNode }) {
+  return <p className="px-2.5 pb-1.5 pt-1 text-xs font-semibold leading-4 text-muted-foreground">{children}</p>
+}
 
 /** The model picker: inside the composer on Home, beside the persona; in the main design's thread, under the composer on its
  * own line (`compact`), so it never takes width from the text. The name only, muted until opened.
@@ -23,7 +29,8 @@ export function ModelPicker({ below = false, compact = false }: { below?: boolea
         <ChevronDown className="size-3.5" />
       </button>
       {open && (
-        <div role="menu" aria-label={modelCopy.label} className={cn('absolute right-0 z-30 w-56 rounded-xl border border-border bg-background p-1.5 shadow-xl', below ? 'top-11' : 'bottom-11')}>
+        <div role="menu" aria-label={VERSION === 'main' ? modelCopy.title : modelCopy.label} className={cn('absolute right-0 z-30 w-56 rounded-xl border border-border bg-background p-1.5 shadow-xl', below ? 'top-11' : compact ? 'bottom-10' : 'bottom-11')}>
+          {VERSION === 'main' && <MenuTitle>{modelCopy.title}</MenuTitle>}
           {modelCopy.models.map((m) => (
             <button key={m.id} role="menuitemradio" aria-checked={m.id === model.id} onClick={() => { setModel(m); setOpen(false) }} className={cn('flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm hover:bg-muted', m.id === model.id && 'bg-muted font-semibold')}>
               <span className="flex-1">{m.name}</span>

@@ -26,9 +26,9 @@ npm run build      # type-check, then build to dist/
 
 ## What the page does
 
-- **Home.** Valerie's emblem sits beside a one-line greeting, with the composer under it and six suggested questions under that, two to a row. Five of them open an answer. "Check the growth numbers" has no answer design yet, so its card shows but can't be picked. The persona (Milo or Brie) and the model are chosen in the composer.
+- **Home.** Valerie's emblem sits beside a one-line greeting, with the composer under it and six suggested questions under that, two to a row. Five of them open an answer. "Check the growth numbers" has no answer design yet, so its card shows but can't be picked. The AI teammate (Milo or Brie) and the model are chosen in the composer; their menus are headed "AI teammates" and "Switch models".
 - **A chat.** Each question starts a thread. While Valerie works, the emblem animates beside one line naming the current step; clicking the line opens the step list. The answer then streams in: a headline (lead), then paragraphs, then a chart card when the answer has one. Under it sit copy, thumbs up and down, regenerate, and follow-up chips.
-- **The composer in a thread** is one row (+, text, mic, send). It grows to two rows when the text wraps, up to six lines. Under it, the disclaimer sits on the left and the model picker on the right.
+- **The composer in a thread** is one row (+, text, mic, send). It grows to two rows when the text wraps, up to six lines. Under it, the AI teammate switch sits on the left and the model switch on the right. Switching either mid-chat adds a divider to the thread ("Now tuned for Brie", "Now answering with …").
 - **Controls, top right.** Chats and New chat (+) share one capsule; View traces sits beside them. Both Chats and View traces open a sheet on the right. In Chats, a row can be deleted, with Undo in a toast. View traces is empty from Home; from a chat it lists the reply's steps and tool calls.
 - **Errors.** An answer can stop at a step, with Retry. When the browser is offline, a strip above the composer says so.
 - **Typed questions** are matched to the closest of the five answers. Anything else gets chips to pick one of them.

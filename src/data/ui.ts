@@ -5,6 +5,8 @@
 /** DRAFT: thread divider when the persona changes. */
 export const personaCopy = {
   switched: 'Now tuned for',
+  /** The persona menu's heading (main design; the user's, 6 Nov: the old design's name for them). Shown only in the open menu. */
+  title: 'AI teammates',
 }
 
 /**
@@ -13,6 +15,8 @@ export const personaCopy = {
  */
 export const modelCopy = {
   switched: 'Now answering with',
+  /** The model menu's heading (main design; the user's, 6 Nov). Shown only in the open menu. */
+  title: 'Switch models',
   /** screen readers only */
   label: 'Model',
   models: [
@@ -27,11 +31,6 @@ export type Model = (typeof modelCopy.models)[number]
 /** A question the prototype has no answer for. Prototype-only: the live product would answer it. */
 export const unknownCopy = {
   lead: 'This prototype has answers for five questions. Pick one to see how Valerie responds:',
-}
-
-/** The user's line (6 Nov): under the thread composer, left, opposite the model picker (main design). */
-export const disclaimerCopy = {
-  text: 'AI models can make mistakes.',
 }
 
 /** Long threads. `jump` is from the backlog brief. */
