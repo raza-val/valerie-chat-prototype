@@ -6,7 +6,7 @@ import { StoreProvider } from '@/lib/store'
 import { BASENAME, CONSTELLATION } from '@/lib/aura'
 import { versionCopy } from '@/data/ui'
 import { ToastProvider } from '@/components/ui/Toast'
-import '@fontsource-variable/dm-sans'
+import '@fontsource-variable/dm-sans/opsz.css'
 import '@fontsource-variable/dm-sans/wght-italic.css' // a true italic (Figma's "(share /year)"), not a slanted upright
 import './styles/index.css'
 

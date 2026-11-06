@@ -38,6 +38,7 @@
   /* Data colours used by the dashboard chart cards */
   --data-up: #059669;
   --data-down: #c2410c;
+  --error: #dc2626; /* DS Semantic/error-border (red/600): a step or answer that failed */
   --data-bespoke: #9333ea;
   --data-leader: #3b60f6;
   /* The answer in chat, from the Figma answer designs (AI-chat-screen, "Output" 119:41560) */
@@ -77,6 +78,7 @@
   --primary-foreground: #0f172a;
   --surface-header: #0f172a;
   --data-bespoke: #c084fc;
+  --error: #f87171; /* red/400 on the dark ground */
   --chart-card: #0f172a;
   --ink-soft: #cbd5e1;
   --data-up-ink: #34d399;
@@ -128,6 +130,7 @@
 
   --color-data-up: var(--data-up);
   --color-data-down: var(--data-down);
+  --color-error: var(--error);
   --color-data-bespoke: var(--data-bespoke);
   --color-data-leader: var(--data-leader);
   --color-chart-card: var(--chart-card);

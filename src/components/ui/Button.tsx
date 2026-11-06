@@ -6,7 +6,7 @@ type Size = 'sm' | 'md' | 'icon'
 
 /**
  * Main design (6 Nov): the DS Button, outline (36px, 1px `--border`, `--primary` text, 16px icons), fully rounded
- * by the user's call over the DS's 12px corners. The header controls and the follow-up chips share it.
+ * by the user's call over the DS's 12px corners. The header controls and the follow-up chips share it (the chips at the DS's xs size).
  */
 export const dsOutline = 'h-9 rounded-full border border-border bg-background text-primary transition-colors hover:bg-muted [&_svg]:size-4 [&_svg]:shrink-0'
 
@@ -34,8 +34,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       className={cn(
         'inline-flex shrink-0 items-center whitespace-nowrap rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
         variants[variant], sizes[size], variant === 'chip' && 'h-8 px-3.5 text-sm font-normal',
-        // DS label: 14/24 semibold, 16px in from each side (the DS's 8 + 4, plus the 4 the user asked for on Chats)
-        variant === 'ds' && 'h-9 gap-1.5 px-4 text-sm font-semibold leading-6', className,
+        // DS Button xs (6 Nov, the user's call: sm's semibold read too heavy for the chips): 32px, label 14/24 medium,
+        // 16px in from each side (the DS's 8 + 4, plus the 4 the user asked for on Chats)
+        variant === 'ds' && 'h-8 gap-1.5 px-4 text-sm font-medium leading-6', className,
       )}
       {...props}
     />

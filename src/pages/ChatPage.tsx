@@ -11,10 +11,11 @@ import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { getPrompt, matchPrompt, prompts, type Prompt } from '@/data/prompts'
 import { personas, type Persona } from '@/data/personas'
-import { threadCopy, unknownCopy, type Model } from '@/data/ui'
+import { disclaimerCopy, threadCopy, unknownCopy, type Model } from '@/data/ui'
 import { useStore } from '@/lib/store'
 import { useOffline } from '@/lib/useOnline'
 import { OfflineStrip } from '@/components/chat/OfflineStrip'
+import { ModelPicker } from '@/components/chat/ModelPicker'
 import { play } from '@/lib/sound'
 import { cn } from '@/lib/cn'
 import { VERSION } from '@/lib/aura'
@@ -104,7 +105,7 @@ function ChatThread() {
     <div data-canvas className="relative flex h-full flex-col bg-canvas">
       <div ref={scroller} onScroll={checkJump} className="min-h-0 flex-1 overflow-y-auto">
         <ChatHeader title={prompt?.chatTitle ?? 'New chat'} chatId={prompt?.id} />
-        <div className="mx-auto flex max-w-[768px] flex-col px-6 pb-36 pt-4">
+        <div className={cn('mx-auto flex max-w-[768px] flex-col px-6 pt-4', VERSION === 'main' ? 'pb-40' : 'pb-36')}>
           {!prompt ? (
             <>
               <div className="mx-auto w-full max-w-[720px]"><UserBubble text={params.get('q') ?? ''} /></div>
@@ -132,7 +133,7 @@ function ChatThread() {
           )}
         </div>
       </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 px-6 pb-6">
+      <div className={cn('pointer-events-none absolute inset-x-0 bottom-0 px-6', VERSION === 'main' ? 'pb-3' : 'pb-6')}>
         <div className="pointer-events-auto relative mx-auto max-w-[756px]">
           {showJump && (
             <button
@@ -145,8 +146,16 @@ function ChatThread() {
           {/* No fade above the composer: the thread stays readable right up to it and slips behind it.
               Only the stack from the middle of its first piece down is solid, so nothing shows beneath or between. */}
           <div className="relative before:absolute before:inset-x-0 before:top-7 before:-bottom-6 before:bg-canvas [&>*]:relative">
-            <Composer placeholder="Ask a follow-up…" onSubmit={ask} busy={!!prompt && working} onStop={() => latestRef.current?.stop()} disabled={offline} docked={working && seatHidden} className="z-10" />
+            <Composer placeholder="Ask a follow-up…" onSubmit={ask} busy={!!prompt && working} onStop={() => latestRef.current?.stop()} disabled={offline} docked={working && seatHidden} pickModel={VERSION !== 'main'} className="z-10" />
             {offline && <OfflineStrip onRetry={reconnect} />}
+            {/* Main design (6 Nov): the model sits under the box, right-aligned, as Claude does, so it never takes width from the text. */}
+            {/* The disclaimer on the left balances it; both sit on the 720 text column's edges (DS text-xs, muted). */}
+            {VERSION === 'main' && (
+              <div className="mt-1.5 flex items-center justify-between pl-[18px] pr-2.5">
+                <p className="text-xs leading-4 text-muted-foreground">{disclaimerCopy.text}</p>
+                <ModelPicker compact />
+              </div>
+            )}
           </div>
         </div>
       </div>

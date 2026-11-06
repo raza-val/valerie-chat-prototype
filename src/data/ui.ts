@@ -29,6 +29,11 @@ export const unknownCopy = {
   lead: 'This prototype has answers for five questions. Pick one to see how Valerie responds:',
 }
 
+/** The user's line (6 Nov): under the thread composer, left, opposite the model picker (main design). */
+export const disclaimerCopy = {
+  text: 'AI models can make mistakes.',
+}
+
 /** Long threads. `jump` is from the backlog brief. */
 export const threadCopy = {
   jump: 'Jump to latest',
@@ -39,12 +44,12 @@ export const errorCopy = {
   /** answer header, e.g. "Stopped at step 3 of 4" */
   stoppedAt: (step: number, total: number) => `Stopped at step ${step} of ${total}`,
   stepFailed: 'Failed',
-  answerFailed: 'Valerie couldn’t finish this answer.',
+  answerFailed: 'This answer couldn’t be finished.',
   chartFailed: 'The chart couldn’t be built.',
   retry: 'Retry',
   trace: 'Open full trace',
   offline: 'You’re offline.',
-  offlineDetail: 'Valerie will answer once you’re back online.',
+  offlineDetail: 'Responses will resume once you’re back online.',
 }
 
 /** DRAFT: the sound toggle in the chat's pills (icon only; these are its label and tooltip). */

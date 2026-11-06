@@ -90,7 +90,7 @@ export const Aura = forwardRef<AuraHandle, {
       ) : (
         <Mascot ref={ref} concept={liquidConcept[AURA_SHAPE]} expression={faces[state]} talking={state === 'speaking'} size={size} body={body} />
       )}
-      {state === 'error' && <span className="absolute -bottom-px -right-px size-2.5 animate-tick rounded-full bg-data-down ring-2 ring-canvas" />}
+      {state === 'error' && <span className="absolute -bottom-px -right-px size-2.5 animate-tick rounded-full bg-error ring-2 ring-canvas" />}
     </Tag>
   )
 })

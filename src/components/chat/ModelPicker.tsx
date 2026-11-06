@@ -4,9 +4,10 @@ import { modelCopy } from '@/data/ui'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
 
-/** The model picker inside the composer, beside the persona on Home and on its own in the thread: the name only, muted until opened.
+/** The model picker: inside the composer on Home, beside the persona; in the main design's thread, under the composer on its
+ * own line (`compact`), so it never takes width from the text. The name only, muted until opened.
  * The menu opens below it on Home (`below`); in the thread the composer sits at the foot of the screen, so it opens above. */
-export function ModelPicker({ below = false }: { below?: boolean }) {
+export function ModelPicker({ below = false, compact = false }: { below?: boolean; compact?: boolean }) {
   const { model, setModel } = useStore()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -17,7 +18,7 @@ export function ModelPicker({ below = false }: { below?: boolean }) {
   }, [])
   return (
     <div ref={ref} className="relative shrink-0">
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-label={`${modelCopy.label}: ${model.name}`} aria-expanded={open} className={cn('flex h-9 items-center gap-1 rounded-lg px-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground', open && 'bg-muted text-foreground')}>
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-label={`${modelCopy.label}: ${model.name}`} aria-expanded={open} className={cn('flex items-center gap-1 rounded-lg px-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground', compact ? 'h-8' : 'h-9', open && 'bg-muted text-foreground')}>
         {model.name}
         <ChevronDown className="size-3.5" />
       </button>

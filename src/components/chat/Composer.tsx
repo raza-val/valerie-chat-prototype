@@ -12,7 +12,8 @@ import { cn } from '@/lib/cn'
  * never hides the thread it floats over. Once the text wraps it opens into two rows (below); it grows to six lines,
  * then scrolls, and is one row again once sent.
  * `tall` (Home): the same controls under a two-line input, + and the persona on the left, model, voice and send on the right.
- * The model can change mid-chat (a divider marks it in the thread).
+ * The model can change mid-chat (a divider marks it in the thread). In the main design's thread it sits under the box
+ * (6 Nov, like Claude): inside the one-row box it took width from the text.
  * The persona (Milo, Brie) is chosen on Home only (`pickPersona`); a chat keeps the persona it started with.
  * The same 10px padding on every side: the buttons sit as far from the left and right edges as from the top and bottom.
  * 36px wider than the 720 text column (756), so that inset puts the + glyph on the text's left edge and the send arrow
@@ -23,8 +24,10 @@ import { cn } from '@/lib/cn'
  * `seed` (Home v4): a suggested question picked beside the composer types itself into the box, then sends, so
  * the card and the composer read as one thing.
  */
-export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled = false, autoFocus = false, tall = false, pickPersona = false, onTyping, docked = false, seed, className }: {
+export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled = false, autoFocus = false, tall = false, pickPersona = false, pickModel = true, onTyping, docked = false, seed, className }: {
   placeholder: string; onSubmit: (text: string) => void; busy?: boolean; onStop?: () => void; disabled?: boolean; autoFocus?: boolean; tall?: boolean; pickPersona?: boolean
+  /** The model picker inside the box. Off in the main design's thread, where it sits under the box instead (ChatPage). */
+  pickModel?: boolean
   seed?: { text: string; n: number }
   /** Whether there is text in the box (Home: Aura listens while you type). */
   onTyping?: (typing: boolean) => void
@@ -109,7 +112,7 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
         className={cn('block max-h-[156px] w-full min-w-0 resize-none bg-transparent text-base leading-6 tracking-[-0.01em] outline-none [grid-area:input] placeholder:text-muted-foreground', two ? 'px-2 pt-1.5' : 'px-1 py-1.5')}
       />
       <div className="flex items-center gap-0.5 [grid-area:tools]">
-        <ModelPicker below={tall} />
+        {pickModel && <ModelPicker below={tall} />}
         <button type="button" onClick={() => toast('Voice input isn’t part of this prototype')} className={iconBtn} aria-label="Voice"><Mic className="size-[18px]" /></button>
         <button
           type="submit"

@@ -236,7 +236,7 @@ export function AnswerErrorView({ prompt, persona, failed, onRetry }: { prompt: 
         <div className="mt-4 rounded-2xl bg-surface shadow-hairline">
           <div className="p-4"><StepsList steps={prompt.steps} failed={failed} showDetail={persona.toolDetail} /></div>
           <div className="flex items-center gap-3 border-t border-border py-3 pl-4 pr-3">
-            <AlertCircle className="size-4 shrink-0 text-data-down" />
+            <AlertCircle className="size-4 shrink-0 text-error" />
             <p className="flex-1 text-sm font-semibold">{errorCopy.answerFailed}</p>
             <Button variant="ghost" onClick={() => openTraces(prompt.id)}>{errorCopy.trace}</Button>
             <Button onClick={onRetry}><RotateCw /> {errorCopy.retry}</Button>

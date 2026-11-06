@@ -20,13 +20,13 @@ export function StepsList({ steps, active = -1, failed, showDetail = false }: { 
         return (
           <li key={s.label} className="relative flex gap-3 pb-3 last:pb-0">
             {i < steps.length - 1 && <span className={cn('absolute left-[9px] top-6 h-[calc(100%-20px)] w-px', done ? 'bg-brand-200 dark:bg-brand-800' : 'bg-border')} />}
-            <span className={cn('relative mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border', done ? 'border-brand-600 bg-brand-600 text-white' : isFailed ? 'border-data-down bg-data-down text-white' : current ? 'border-brand-300 text-brand-600' : 'border-border text-transparent')}>
+            <span className={cn('relative mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border', done ? 'border-brand-600 bg-brand-600 text-white' : isFailed ? 'border-error bg-error text-white' : current ? 'border-brand-300 text-brand-600' : 'border-border text-transparent')}>
               {done ? <Check className="size-3 animate-tick" strokeWidth={3} /> : isFailed ? <X className="size-3 animate-tick" strokeWidth={3} /> : current ? <Loader2 className="size-3 animate-spin" /> : null}
             </span>
             <span className="min-w-0 flex-1">
               <span className="flex items-baseline gap-2">
                 <span className={cn('text-sm', current || isFailed ? 'font-semibold text-foreground' : done ? 'text-foreground' : 'text-muted-foreground')}>{s.label}</span>
-                <span className={cn('ml-auto shrink-0 text-xs tabular-nums', isFailed ? 'font-semibold text-data-down' : 'text-muted-foreground')}>
+                <span className={cn('ml-auto shrink-0 text-xs tabular-nums', isFailed ? 'font-semibold text-error' : 'text-muted-foreground')}>
                   {done ? `${s.seconds}s` : isFailed ? errorCopy.stepFailed : current ? 'Working…' : stopped ? '' : 'Queued'}
                 </span>
               </span>

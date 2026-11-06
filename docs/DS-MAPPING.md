@@ -70,7 +70,7 @@ Lucide throughout, as in the DS. The DS draws them at **16px**; code uses 15px i
 | Answer header (steps toggle) | ghost text button, 32px, 8 corners | Button, ghost, sm | ≈ |
 | Open full trace | ghost Button, 14/20 | Button, ghost (Figma 138:1329) | ≈ 14/24, 12 corners |
 | Copy, up, down, regenerate | ghost icon, 28px, 15px icons, 8 corners | Icon Button, ghost, 28 (6px padding, 16px icon) | ≈ |
-| Follow-up chips (and the unknown-question chips) | Button, outline (6 Nov): 36px, 1px border, 14/24 semibold `--primary`, 16px in, hover `--muted`; fully rounded like the header controls | **Button, outline** (Figma 140:1592) | ≈ round by choice |
+| Follow-up chips (and the unknown-question chips) | Button, outline, xs (6 Nov): 32px, 1px border, 14/24 medium `--primary`, 16px in, hover `--muted`; fully rounded like the header controls | **Button, outline** (Figma 140:1592) | ≈ round by choice |
 | Chart cards | Market Briefing Card | Market Briefing Card | ✓ |
 | Persona / model divider | hairlines + 12px text | Separator | ✓ |
 | User bubble | 16 corners with a 6 tail, hairline | — | — ours |
