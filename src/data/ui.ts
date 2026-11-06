@@ -93,3 +93,17 @@ export const versionsCopy = {
   experiments: { href: '/exp', label: 'Aura experiments' },
   botExperiments: { href: '/exp/bot', label: 'Bot experiments' },
 }
+
+/** The live product's View traces copy (6 Nov screenshots); used by the main design. */
+export const tracesCopy = {
+  title: 'View traces',
+  description: 'How the assistant produced each reply: tool calls, reasoning and traces.',
+  empty: 'No activity yet. Send a message to see how the assistant works.',
+}
+
+/** DRAFT: deleting a chat from the Chats drawer (main design; the live product has it). */
+export const chatsCopy = {
+  delete: 'Delete chat',
+  deleted: 'Chat deleted',
+  undo: 'Undo',
+}

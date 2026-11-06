@@ -4,14 +4,58 @@ import { Sheet } from '@/components/ui/Sheet'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { getPrompt, prompts } from '@/data/prompts'
+import { traces } from '@/data/traces'
+import { tracesCopy } from '@/data/ui'
+import { VERSION } from '@/lib/aura'
 import { totalSeconds } from '@/lib/format'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
 
 const traceId = (id: string) => `tr_${(id.length * 7919).toString(16)}${id.slice(0, 3)}`
 
-/** Traces: list of runs, or the step-by-step timing of one run. */
+/** Traces: list of runs, or the step-by-step timing of one run. (The archive's; the main design has its own, below.) */
 export function TracesDrawer() {
+  if (VERSION === 'main') return <MainTraces />
+  return <ArchiveTraces />
+}
+
+/**
+ * The main design's traces, after the live product (6 Nov): empty until a message is picked (from Home, nothing to show);
+ * from a message, its question, then each step with its tool call as DS pieces: a Card, a Badge naming the tool, and the
+ * call's payload in a muted block. DM Sans throughout, never monospace (hard rule 3); figures are tabular.
+ */
+function MainTraces() {
+  const { tracesOpen, closeTraces, traceFocus } = useStore()
+  const p = getPrompt(traceFocus ?? undefined)
+  const calls = p ? traces[p.id] ?? [] : []
+  return (
+    <Sheet open={tracesOpen} onClose={closeTraces} title={tracesCopy.title} description={tracesCopy.description} width={480}>
+      {!p ? (
+        <p className="mx-auto mt-16 max-w-[320px] text-center text-sm leading-5 text-muted-foreground">{tracesCopy.empty}</p>
+      ) : (
+        <div>
+          <p className="text-sm font-medium leading-5 text-foreground">{p.question}</p>
+          <ol className="mt-6 flex flex-col gap-6">
+            {p.steps.map((s, i) => calls[i] && (
+              <li key={s.label}>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-medium leading-5 text-foreground">{s.label}</span>
+                  <span className="ml-auto text-xs leading-4 tabular-nums text-muted-foreground">{s.seconds}s</span>
+                </div>
+                <div className="mt-2 rounded-xl border border-border bg-background p-3">
+                  <span className="inline-flex h-6 items-center rounded-md bg-muted px-2 text-xs font-semibold leading-4 text-foreground">{calls[i].tool}</span>
+                  <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-muted p-3 font-sans text-xs leading-5 tabular-nums text-foreground">{JSON.stringify(calls[i].payload, null, 2)}</pre>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </Sheet>
+  )
+}
+
+function ArchiveTraces() {
   const { tracesOpen, closeTraces, traceFocus, persona: current, answeredFor } = useStore()
   const [sel, setSel] = useState<string | null>(traceFocus)
   const toast = useToast()

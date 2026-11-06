@@ -3,12 +3,20 @@ import { Activity, History, Plus, Volume2, VolumeX } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/lib/store'
 import { setSound, useSound } from '@/lib/sound'
-import { VOICE } from '@/lib/aura'
+import { VERSION, VOICE } from '@/lib/aura'
 import { soundCopy } from '@/data/ui'
 import { cn } from '@/lib/cn'
 
 const ring = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40'
 const ink = 'text-muted-foreground transition-colors hover:text-foreground [&_svg]:size-[15px] [&_svg]:shrink-0'
+/**
+ * The main design's controls are the DS's own (Valerie Shadcn, Figma 6 Nov): Button and Icon Button, outline variant.
+ * 36px tall, 12px corners (calc(var(--radius) - 2px)), a 1px --border on --background, a 16px Lucide icon,
+ * the label text-sm/leading-6_buttons/semibold in --primary. Button: 8px in, the label wrapped in 4px each side.
+ */
+// Rounded fully (6 Nov, the user's call over the DS's 12px corners), with 12px each side of the Chats label's 4px wrap.
+const dsOutline = 'h-9 rounded-full border border-border bg-background text-primary transition-colors hover:bg-muted [&_svg]:size-4 [&_svg]:shrink-0'
+const dsIconButton = cn(dsOutline, 'grid w-9 place-items-center')
 
 /** The name of an icon-only button, shown under it on hover (after a beat) or keyboard focus. `end`: hug the right edge. */
 function Tip({ label, end = false, children }: { label: string; end?: boolean; children: ReactNode }) {
@@ -30,6 +38,31 @@ export function ChatHeader({ title, chatId }: { title?: string; chatId?: string 
   const navigate = useNavigate()
   const { setChatsOpen, openTraces } = useStore()
   const sound = useSound()
+  if (VERSION === 'main') return (
+    <div className="pointer-events-none sticky top-0 z-20 h-14 shrink-0">
+      {title && <h1 className="sr-only">{title}</h1>}
+      <div className="pointer-events-auto absolute right-4 top-3 flex items-center gap-2">
+        {/* Chats, and in a thread New chat joined to it: one outline capsule split by a hairline (6 Nov, the user's pick).
+            The DS has no button group yet; this one is to be added to it (docs/DS-MAPPING.md). */}
+        <div className="flex h-9 items-center rounded-full border border-border bg-background text-primary">
+          <button onClick={() => setChatsOpen(true)} className={cn('inline-flex h-full items-center px-3 text-sm font-semibold leading-6 transition-colors hover:bg-muted [&_svg]:size-4 [&_svg]:shrink-0', title ? 'rounded-l-full pr-2.5' : 'rounded-full', ring)}>
+            <History /><span className="px-1">Chats</span>
+          </button>
+          {title && (
+            <>
+              <span aria-hidden className="h-4 w-px bg-border" />
+              <Tip label="New chat">
+                <button onClick={() => navigate({ pathname: '/', search: location.search })} aria-label="New chat" className={cn('grid h-[34px] w-10 place-items-center rounded-r-full pr-0.5 transition-colors hover:bg-muted [&_svg]:size-4', ring)}><Plus /></button>
+              </Tip>
+            </>
+          )}
+        </div>
+        <Tip label="View traces" end>
+          <button onClick={() => openTraces(chatId ?? null)} aria-label="View traces" className={cn(dsIconButton, ring)}><Activity /></button>
+        </Tip>
+      </div>
+    </div>
+  )
   return (
     <div className="pointer-events-none sticky top-0 z-20 h-14 shrink-0">
       {title && <h1 className="sr-only">{title}</h1>}

@@ -106,15 +106,15 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
       {/* Main: one line, Aura inline before it (as Claude's mark sits before its greeting), the pair centred in the column. */}
       <div className={cn('flex', layout === 'main' ? 'w-full items-center justify-center gap-2.5' : beside ? 'w-full items-start gap-6' : 'flex-col items-center')}>
         {/* Beside the headline (v4, the Hologram), Aura rises 16px: the mark sits that far inside its box (it tilts ±2px), and the ink should start level with the text.
-            Main: Aura a little taller than the line (68px box, about 45px of ink), centred on it. The box gives back 14px top and bottom
-            (it takes the line's 40px) and 5px on the left, where the mark sits inside it, so the pair is centred on its ink.
+            Main: Aura at 68px (about 45px of ink), centred on the line. The box gives back 16px top and bottom
+            (it takes the line's 36px) and 5px on the left, where the mark sits inside it, so the pair is centred on its ink.
             Its arms end in points, so 10px reads as the gap. */}
-        <div ref={hero} className={cn('flex shrink-0 animate-rise', layout === 'main' ? '-my-[14px] -ml-[5px]' : beside && '-mt-4')}>
+        <div ref={hero} className={cn('flex shrink-0 animate-rise', layout === 'main' ? '-my-4 -ml-[5px]' : beside && '-mt-4')}>
           <Aura ref={aura} size={layout === 'main' ? 68 : 112} live state={typing ? 'listening' : said !== null ? 'speaking' : 'idle'} onTap={() => (said !== null ? hush.current?.() : greet())} label={said !== null ? voiceCopy.stop : VOICE ? voiceCopy.listen : voiceCopy.replay} />
         </div>
         <div className={cn('flex flex-col', beside ? 'items-start' : 'items-center')}>
-          {/* Main follows the DS style "text-4xl (web only)/leading-10/semibold": 36/40, letter spacing -2.5%. The archive keeps 36/42 at -3%. */}
-          <h1 aria-label={site.tagline} className={cn('animate-rise text-[36px] font-semibold [animation-delay:60ms]', layout === 'main' ? 'whitespace-nowrap leading-10 tracking-[-0.025em]' : 'leading-[42px] tracking-[-0.03em]', beside ? 'text-left' : 'mt-6 text-center')}>
+          {/* Main follows the DS's text-3xl, semibold: 30/36, letter spacing -2.5% (6 Nov; it was text-4xl, 36/40). The archive keeps 36/42 at -3%. */}
+          <h1 aria-label={site.tagline} className={cn('animate-rise font-semibold [animation-delay:60ms]', layout === 'main' ? 'whitespace-nowrap text-3xl leading-9 tracking-[-0.025em]' : 'text-[36px] leading-[42px] tracking-[-0.03em]', beside ? 'text-left' : 'mt-6 text-center')}>
             {/* Main: one line, one colour, like every assistant's greeting. The archive keeps two lines, ink then grey. */}
             {layout === 'main' ? words.map((w, i) => word(w, i)) : words.map((w, i) => <Fragment key={i}>{i === split && <br />}{word(w, i)}</Fragment>)}
           </h1>
@@ -144,8 +144,8 @@ export function HomePage({ layout = 'tabs' }: { layout?: HomeLayout }) {
   return (
     <div data-canvas className="relative flex h-full flex-col overflow-y-auto bg-canvas">
       <ChatHeader />
-      {/* Main sits a little above the middle (optical centre): 16px more under it than over it. */}
-      <div className={cn('flex flex-1 flex-col items-center justify-center px-6', layout === 'main' ? 'pb-20' : 'pb-16')}>
+      {/* Main: 80px over and under it, so the group sits 40px lower than it did with padding under it only (6 Nov: it read too high). */}
+      <div className={cn('flex flex-1 flex-col items-center justify-center px-6', layout === 'main' ? 'py-20' : 'pb-16')}>
         <div className="flex w-full max-w-[756px] flex-col items-center">
           {intro}
           {layout === 'below' || layout === 'pairs' || layout === 'main'

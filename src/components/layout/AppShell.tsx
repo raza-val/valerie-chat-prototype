@@ -4,7 +4,6 @@ import { Bell, ChevronDown, ChevronRight, CircleUser, Moon, PanelLeft, Sun } fro
 import { ValerieLogo } from '@/components/brand/ValerieLogo'
 import { useTheme } from '@/lib/theme'
 import { site } from '@/data/site'
-import { versionsCopy } from '@/data/ui'
 import { cn } from '@/lib/cn'
 
 /**
@@ -31,8 +30,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     return (
       <div className="flex h-full flex-col">
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface-header px-5">
-          {/* The logo opens the versions page (a plain link: each version is its own basename). */}
-          <a href="/archive" aria-label={versionsCopy.title} title={versionsCopy.title} className="-m-1 rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
+          {/* The logo opens the main design's Home (6 Nov; it opened /archive until then). A plain link, so from an archived
+              version it leaves that version's basename. The archive stays at /archive. */}
+          <a href="/" aria-label="Valerie" className="-m-1 rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
             <ValerieLogo className="h-[22px] text-foreground" />
           </a>
           {right}
