@@ -2,7 +2,7 @@
 
 ## Netlify or Vercel (no password)
 
-Both upload straight from this folder; no GitHub. Everything lives on one link: the four versions to compare at `/v1` (Solid acrylic), `/v2` (Constellation), `/v3` (Mark orb) and `/v4` (Hologram); `/` (the dropped original) and old `/constellation` links forward to v1 and v2.
+Both upload straight from this folder; no GitHub. Everything lives on one link: the main design at `/`, and the four archived versions at `/archive/v1` (Solid acrylic), `/archive/v2` (Constellation), `/archive/v3` (Mark orb) and `/archive/v4` (Hologram), listed at `/archive`. Old `/v1`–`/v4`, `/constellation` and `/versions` links forward there.
 Nothing is listed or announced anywhere, and every file tells search engines to stay out.
 
 | | First time | Every update |

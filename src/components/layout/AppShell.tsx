@@ -32,7 +32,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex h-full flex-col">
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface-header px-5">
           {/* The logo opens the versions page (a plain link: each version is its own basename). */}
-          <a href="/versions" aria-label={versionsCopy.title} title={versionsCopy.title} className="-m-1 rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
+          <a href="/archive" aria-label={versionsCopy.title} title={versionsCopy.title} className="-m-1 rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
             <ValerieLogo className="h-[22px] text-foreground" />
           </a>
           {right}

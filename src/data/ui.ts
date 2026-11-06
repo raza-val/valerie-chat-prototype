@@ -80,15 +80,16 @@ export const versionCopy = {
   titleB: 'Valerie · Conversational AI · Constellation',
 }
 
-/** DRAFT: the versions page (`/versions`), opened from the logo. A tool for presenting, not part of the product. */
+/** DRAFT: the archive page (`/archive`), opened from the logo. A tool for presenting, not part of the product. */
 export const versionsCopy = {
-  title: 'Versions',
+  title: 'Archive',
   versions: [
-    { href: '/v1', tag: 'v1', name: 'Solid acrylic', home: 'Questions in pairs under the composer' },
-    { href: '/v2', tag: 'v2', name: 'Constellation', home: 'Questions in tabs under the composer' },
-    { href: '/v3', tag: 'v3', name: 'Mark orb', home: 'Questions under the composer' },
-    { href: '/v4', tag: 'v4', name: 'Hologram', home: 'Questions beside the composer' },
+    { href: '/archive/v1', tag: 'v1', name: 'Solid acrylic', home: 'Questions in pairs under the composer' },
+    { href: '/archive/v2', tag: 'v2', name: 'Constellation', home: 'Questions in tabs under the composer' },
+    { href: '/archive/v3', tag: 'v3', name: 'Mark orb', home: 'Questions under the composer' },
+    { href: '/archive/v4', tag: 'v4', name: 'Hologram', home: 'Questions beside the composer' },
   ],
+  current: { href: '/', label: 'Current design' },
   experiments: { href: '/exp', label: 'Aura experiments' },
   botExperiments: { href: '/exp/bot', label: 'Bot experiments' },
 }

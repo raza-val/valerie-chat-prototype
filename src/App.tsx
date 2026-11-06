@@ -25,8 +25,8 @@ export default function App() {
   )
 }
 
-/** Each version's Home: v4 the questions beside the composer; v1 the same cards under it, two to a row, v3 one to a row; v2 the lens tabs. */
-const layout: HomeLayout = VERSION === 'v4' ? 'side' : VERSION === 'v2' ? 'tabs' : VERSION === 'v1' ? 'pairs' : 'below'
+/** Each version's Home: main and archived v1 the question cards under the composer, two to a row; v3 one to a row; v4 beside the composer; v2 the lens tabs. */
+const layout: HomeLayout = ({ main: 'pairs', v1: 'pairs', v2: 'tabs', v3: 'below', v4: 'side' } as const)[VERSION]
 
 function Product() {
   return (
@@ -34,7 +34,7 @@ function Product() {
       <Routes>
         <Route path="/" element={<HomePage layout={layout} />} />
         <Route path="/chat/:id" element={<ChatPage />} />
-        <Route path="/versions" element={<VersionsPage />} />
+        <Route path="/archive" element={<VersionsPage />} />
         <Route path="*" element={<HomePage layout={layout} />} />
       </Routes>
       <ChatsDrawer />

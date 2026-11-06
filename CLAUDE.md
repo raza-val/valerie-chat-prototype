@@ -34,18 +34,21 @@ A live answer streams its lead word by word, then brings the body and chart in o
 
 ## Versions
 
-Leadership compares four versions, **v1–v4**, each a whole prototype under its own prefix (the router's basename: `VERSION`, `AURA_FORM`, `ABSTRACT` in `src/lib/aura.ts`). The answers and the answer page are the same in all of them; only Aura and the Home layout differ. Build every change for all and check all.
+**Since 6 Nov the main design lives at `/`**: the Hologram (v4's Aura) with the question cards under the composer, two to a row (v1's `pairs`). This is the one being designed from here on: build new work for it and check it at `/`.
+
+The four versions leadership compared, **v1–v4**, are archived, each a whole prototype under its own prefix, `/archive/v1/…` to `/archive/v4/…` (the router's basename: `VERSION`, `AURA_FORM`, `ABSTRACT` in `src/lib/aura.ts`; `VERSION` is `'main'` at `/`). Archived v4 keeps its old Home (questions beside the composer). Shared code changes reach the archive too, so check it still loads, but don't design for it. Old links forward: `/v1/…`–`/v4/…` to the archive, `/constellation/…` to archived v2, `/versions` to `/archive`.
 
 | URL | Aura | Home | While working |
 |---|---|---|---|
-| `/v1/…` | **Solid acrylic** (from `/exp/bot`: the mark as two thick pieces of clear blue acrylic, 3D; `exp/bot/Solid.tsx`, three.js, loaded only in v1) | v4's question cards under the composer, two to a row | the abstract flow (B below) |
-| `/v2/…` | **Constellation** (old `/constellation/…` links forward here) | lens tabs, full questions | the abstract flow |
-| `/v3/…` | **Mark orb** (Figma "Orb" 122:36999: the white mark on a navy sphere; `exp/MarkOrb.tsx`; v1 until 28 Oct) | the same cards under the composer | the abstract flow |
-| `/v4/…` | **Hologram** (from `/exp`) | questions beside the composer | the abstract flow |
+| `/` (main) | **Hologram** | v1's question cards under the composer, two to a row | the abstract flow |
+| `/archive/v1/…` | **Solid acrylic** (from `/exp/bot`: the mark as two thick pieces of clear blue acrylic, 3D; `exp/bot/Solid.tsx`, three.js, loaded only in v1) | question cards under the composer, two to a row | the abstract flow (B below) |
+| `/archive/v2/…` | **Constellation** (old `/constellation/…` links forward here) | lens tabs, full questions | the abstract flow |
+| `/archive/v3/…` | **Mark orb** (Figma "Orb" 122:36999: the white mark on a navy sphere; `exp/MarkOrb.tsx`; v1 until 28 Oct) | the same cards under the composer | the abstract flow |
+| `/archive/v4/…` | **Hologram** (from `/exp`) | questions beside the composer | the abstract flow |
 
-Renumbered on 28 Oct, when the original (A, the liquid-chrome hexagon at `/`) was dropped: `/` and any other link outside a version (except `/versions`, `/exp`, `/lab`) now lands in v1 (`src/lib/aura.ts`). A's code is still there (version `'a'` is only the tool pages now) and its notes below are history. The first v3 (the Orb, card-grid Home) was rejected on 28 Oct and removed. Later that day the user made Solid acrylic v1 and moved the Mark orb (v1 until then, Home and all) to v3. v4, the Hologram, was the preferred direction; Solid acrylic came out of the experiments that followed.
+History: renumbered on 28 Oct, when the original (A, the liquid-chrome hexagon at `/`) was dropped: `/` and any other link outside a version (except `/versions`, `/exp`, `/lab`) now lands in v1 (`src/lib/aura.ts`). A's code is still there (version `'a'` is only the tool pages now) and its notes below are history. The first v3 (the Orb, card-grid Home) was rejected on 28 Oct and removed. Later that day the user made Solid acrylic v1 and moved the Mark orb (v1 until then, Home and all) to v3. v4, the Hologram, was the preferred direction; Solid acrylic came out of the experiments that followed.
 
-The Valerie logo (top left, `AppShell`) opens **`/versions`**: one card per version, each with its Aura live (thinking on hover), plus a link to `/exp`. Its strings are DRAFT in `ui.ts` (`versionsCopy`). Links there are plain `<a href>`, not router links: a version's basename is read once at load.
+The Valerie logo (top left, `AppShell`) opens **`/archive`**: one card per archived version, each with its Aura live (thinking on hover), plus links to the current design (`/`) and `/exp`. Its strings are DRAFT in `ui.ts` (`versionsCopy`). Links there are plain `<a href>`, not router links: a version's basename is read once at load.
 
 **No version has voice** (28 Oct, `VOICE` in `src/lib/aura.ts`): no sound pill, no cues, `?sound=1` is ignored, no audio is fetched; the lead streams in ink. On Home, tapping Aura still plays the greeting, silently (`playSilent` in `src/lib/voice.ts`): the headline inks word by word and Aura moves on the recording's timing and loudness (tooltip "Replay greeting", DRAFT). In the thread, tapping Aura does nothing.
 
@@ -64,9 +67,9 @@ Leadership passed on the chrome hexagon and the cloud (28 Oct): no human structu
 
 ## Home layouts
 
-Each version has one Home (`HomePage layout=…`, picked in `App.tsx`). v2 uses the lens tabs; v1, v3 and v4:
+Each version has one Home (`HomePage layout=…`, picked in `App.tsx`). The main design (`/`) uses v1's `pairs`; archived v2 the lens tabs; v1, v3 and v4:
 
-- **v4** (`side`, the Hologram): Aura beside the headline (not above it) and the composer on the left, the questions stacked as white cards (360px wide) on the right under "Suggested questions". Both columns start on one line: Aura, the headline and the "Suggested questions" heading share their top edge (the Hologram nudged up 16px, as far as its mark sits inside its box); the space under the composer is left open.
+- **v4** (`side`, the Hologram; archived v4 only, main uses `pairs`): Aura beside the headline (not above it) and the composer on the left, the questions stacked as white cards (360px wide) on the right under "Suggested questions". Both columns start on one line: Aura, the headline and the "Suggested questions" heading share their top edge (the Hologram nudged up 16px, as far as its mark sits inside its box); the space under the composer is left open.
 - (A left side panel opened from the composer, was tried and removed on 27 Oct.)
 - **v1** (`pairs`, 28 Oct): as v3 below, but the cards two to a row (equal heights in a row; the fifth, odd one runs the whole row).
 - **v3** (`below`, 28 Oct; v1's until then): Aura and the headline centred, and v4's cards (same card, "Suggested questions" heading, preview and pick) stacked under the composer at its 756 width, one question per line. At 1440 × 900 the last card sits just below the fold.

@@ -11,18 +11,19 @@ npm install      # first time only
 npm run dev      # open the http://localhost:5173 link it prints
 ```
 
-## Versions for leadership
+## Main design and archive
 
-The same product and the same answers, with a different Aura (Valerie's character) and Home layout, so leadership can compare them side by side. Every link below works in each version: put its prefix in front of the path. The Valerie logo opens `/versions`, with all four on one page.
+`/` is the main design (since 6 Nov): the Hologram, with the suggested questions under the composer, two to a row. The four versions leadership compared are archived, with the same product and answers but a different Aura (Valerie's character) and Home layout. Every link below works in each one: put its prefix in front of the path. The Valerie logo opens `/archive`, with all four on one page.
 
 | Version | Aura | Home | An answer |
 | --- | --- | --- | --- |
-| **v1** | Solid acrylic: the mark as two thick pieces of clear blue acrylic, in 3D | `/v1/` (questions in pairs under the composer) | `/v1/chat/hear-the-buyers?state=answer` |
-| **v2** | Constellation: the Valerie sparkle drawn in data points | `/v2/` (lens tabs, full questions) | `/v2/chat/hear-the-buyers?state=answer` |
-| **v3** | Mark orb: the white mark on a navy sphere (v1 until 28 Oct) | `/v3/` (questions under the composer) | `/v3/chat/hear-the-buyers?state=answer` |
-| **v4** | Hologram: stacked slices that fan out (preferred) | `/v4/` (questions beside the composer) | `/v4/chat/hear-the-buyers?state=answer` |
+| **Main** | Hologram | `/` (questions in pairs under the composer) | `/chat/hear-the-buyers?state=answer` |
+| **v1** | Solid acrylic: the mark as two thick pieces of clear blue acrylic, in 3D | `/archive/v1/` (questions in pairs under the composer) | `/archive/v1/chat/hear-the-buyers?state=answer` |
+| **v2** | Constellation: the Valerie sparkle drawn in data points | `/archive/v2/` (lens tabs, full questions) | `/archive/v2/chat/hear-the-buyers?state=answer` |
+| **v3** | Mark orb: the white mark on a navy sphere (v1 until 28 Oct) | `/archive/v3/` (questions under the composer) | `/archive/v3/chat/hear-the-buyers?state=answer` |
+| **v4** | Hologram: stacked slices that fan out (preferred) | `/archive/v4/` (questions beside the composer) | `/archive/v4/chat/hear-the-buyers?state=answer` |
 
-`/` and links without a prefix land in v1; old `/constellation/…` links in v2. Links inside each version stay in it. While Valerie works, Aura changes form next to a single shimmering line naming the step; the skeleton shows only in the last moments before the answer. `?state=working` shows that first stage.
+Old links forward: `/v1/…`–`/v4/…` to the archive, `/constellation/…` to archived v2, `/versions` to `/archive`. Links inside each version stay in it. While Valerie works, Aura changes form next to a single shimmering line naming the step; the skeleton shows only in the last moments before the answer. `?state=working` shows that first stage.
 
 ## Screens and links you can share
 

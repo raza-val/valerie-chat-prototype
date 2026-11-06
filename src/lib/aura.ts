@@ -13,29 +13,31 @@ export type ChromeShape = 'hex' | 'cloud'
 /** The shape Aura takes in the product. The cloud is kept as an option; switching back is this line (and its still). */
 export const AURA_SHAPE: ChromeShape = 'hex'
 /**
- * Versions of the prototype for leadership to compare: the same product and the same answers, a different Aura.
- * `/v1/…` Solid acrylic (from /exp/bot), `/v2/…` the Constellation, `/v3/…` the Mark orb (Figma 122:36999), `/v4/…` the
- * Hologram (questions beside the composer).
- * The prefix is the router's basename (main.tsx), so every link inside a version stays in it. The original (the
- * liquid-chrome hexagon at `/`) was dropped on 28 Oct: any link outside a version, except the tool pages (/versions, /exp,
- * /lab), lands in v1. `/constellation/…` links land in v2. On 28 Oct the first v3 (the Orb, Home as a card grid) was rejected,
- * then Solid acrylic became v1 and the Mark orb, v1 until then, moved to v3. 'a' is now only the tool pages.
+ * Since 6 Nov the product at `/` is the main design ('main': the Hologram, the question cards under the composer two to a
+ * row), the one being designed from here on. The four versions leadership compared are archived, each whole under its own
+ * prefix: `/archive/v1/…` Solid acrylic (from /exp/bot), `/archive/v2/…` the Constellation, `/archive/v3/…` the Mark orb
+ * (Figma 122:36999), `/archive/v4/…` the Hologram with the questions beside the composer. `/archive` lists them.
+ * The prefix is the router's basename (main.tsx), so every link inside a version stays in it. Old links forward:
+ * `/v1/…`–`/v4/…` to the archive, `/constellation/…` to archived v2, `/versions` to `/archive`.
+ * (The liquid-chrome hexagon, the original at `/`, was dropped on 28 Oct; its code is still here, unreachable.)
  */
-export type Version = 'a' | 'v1' | 'v2' | 'v3' | 'v4'
+export type Version = 'main' | 'v1' | 'v2' | 'v3' | 'v4'
 if (typeof location !== 'undefined') {
   const p = location.pathname
-  const to = /^\/constellation(\/|$)/.test(p) ? p.replace(/^\/constellation/, '/v2')
-    : /^\/(v[1-4]|versions|exp|lab)(\/|$)/.test(p) ? null
-    : `/v1${p === '/' ? '' : p}`
+  const to = /^\/constellation(\/|$)/.test(p) ? p.replace(/^\/constellation/, '/archive/v2')
+    : /^\/v[1-4](\/|$)/.test(p) ? `/archive${p}`
+    : /^\/versions\/?$/.test(p) ? '/archive'
+    : null
   if (to) history.replaceState(history.state, '', to + location.search + location.hash)
 }
-export const VERSION: Version = (typeof location !== 'undefined' && (['v1', 'v2', 'v3', 'v4'] as const).find((v) => location.pathname === `/${v}` || location.pathname.startsWith(`/${v}/`))) || 'a'
-export const BASENAME = VERSION === 'a' ? undefined : `/${VERSION}`
-/** The faceless Aura of each version: v1 Solid acrylic, v2 the Constellation, v3 the Mark orb, v4 the Hologram. */
-export const AURA_FORM = ({ a: 'hex', v1: 'solid', v2: 'constellation', v3: 'markorb', v4: 'hologram' } as const)[VERSION]
+const archived = typeof location !== 'undefined' ? location.pathname.match(/^\/archive\/(v[1-4])(\/|$)/)?.[1] as Version | undefined : undefined
+export const VERSION: Version = archived ?? 'main'
+export const BASENAME = VERSION === 'main' ? undefined : `/archive/${VERSION}`
+/** The faceless Aura of each version: main and archived v4 the Hologram, v1 Solid acrylic, v2 the Constellation, v3 the Mark orb. */
+export const AURA_FORM = ({ main: 'hologram', v1: 'solid', v2: 'constellation', v3: 'markorb', v4: 'hologram' } as const)[VERSION]
 export const CONSTELLATION = VERSION === 'v2'
-/** v1–v4: no face, and the long wait (about 20s) with one shimmering step line, so the form has time to work. */
-export const ABSTRACT = VERSION !== 'a'
+/** Every version: no face, and the long wait (about 20s) with one shimmering step line, so the form has time to work. */
+export const ABSTRACT = true as boolean
 /** No voice in any version (28 Oct): no sound pill, no cues, Aura isn't tapped to speak. The voice code stays; this turns it back on. */
 export const VOICE = false as boolean
 export const shapeOf = (s: AuraState): AuraShape => (s === 'thinking' ? 'blob' : 'mark')
