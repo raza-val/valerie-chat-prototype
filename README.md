@@ -53,6 +53,8 @@ Each Figma screen and how to open the same state in code (`localhost:5173` or th
 | [12 · Error · Stopped at a step](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=181-2894) | `/chat/category-talk?state=error` |
 | [13 · Offline](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=182-3886) | `/chat/category-talk?state=answer&offline=1` |
 | [14 · Home · Persona picker](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=191-4652) | `/`, then the persona button in the composer |
+| [15 · Answer · AI teammates](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=210-4978) | `/chat/category-talk?state=answer`, then **Milo** under the composer |
+| [16 · Answer · Switch models](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=210-5349) | the same, then the model under the composer |
 
 These states are in code but have no Figma screen:
 

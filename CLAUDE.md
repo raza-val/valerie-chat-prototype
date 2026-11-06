@@ -121,6 +121,6 @@ Notes:
 
 File `LY0YbZF2Egxak797VEtqDG` (AI-chat-screen):
 
-- **The main design's screens** (section 166:41883, 14 states, components in 173:218) are the developer's source of truth for the look; the prototype shows the behaviour (6 Nov, README). Don't list Figma-vs-code differences for the developer.
+- **The main design's screens** (section 166:41883, 16 states, components in 173:218; the thread's persona switch is `Chat / Persona switch` 209:4942) are the developer's source of truth for the look; the prototype shows the behaviour (6 Nov, README). Don't list Figma-vs-code differences for the developer.
 - "Stage 2 v3 · Chat content" (node 85:36103) is the wireframe.
 - "Chart Set #1" (58:20661) and "Chart set #2" (58:8024) are the chart originals.
