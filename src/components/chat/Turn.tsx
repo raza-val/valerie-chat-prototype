@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { AnswerErrorView, AnswerView, WorkingView } from './AnswerView'
+import { BriefReply, briefFor } from './BriefView'
 import { UserBubble } from './UserBubble'
 import type { Persona } from '@/data/personas'
 import type { Prompt } from '@/data/prompts'
@@ -27,7 +28,10 @@ export const Turn = forwardRef<TurnHandle, {
   onWorking?: (working: boolean) => void
   /** Only the latest turn offers follow-ups. */
   onFollowUp?: (text: string) => void
-}>(function Turn({ prompt, persona, mode: initial, onWorking, onFollowUp }, ref) {
+  /** A brief (Brie, main design): whether it's the document open beside the chat, and how to open it. Called once it's written. */
+  docOpen?: boolean
+  onDoc?: () => void
+}>(function Turn({ prompt, persona, mode: initial, onWorking, onFollowUp, docOpen = false, onDoc }, ref) {
   const settled = initial === 'answer' || initial === 'chart-error'
   const [mode, setMode] = useState(initial)
   const [active, setActive] = useState(settled ? -1 : 0)
@@ -65,6 +69,9 @@ export const Turn = forwardRef<TurnHandle, {
   const failed = failedAt !== null
   const working = active !== -1 && !failed
   useEffect(() => { onWorking?.(working) }, [working])
+  // A brief opens beside the chat as soon as it's written (or at once, when the turn starts settled).
+  const brief = briefFor(prompt, persona)
+  useEffect(() => { if (brief && !working && !failed) onDoc?.() }, [working, failed])
 
   useImperativeHandle(ref, () => ({
     stop: () => { timers.current.forEach(clearTimeout); setActive(-1); setChartReady(true) },
@@ -83,7 +90,9 @@ export const Turn = forwardRef<TurnHandle, {
         {failed ? (
           <AnswerErrorView prompt={prompt} persona={persona} failed={failedAt} onRetry={retryAnswer} />
         ) : working ? (
-          <WorkingView prompt={prompt} persona={persona} active={active} shaping={shaping} />
+          <WorkingView prompt={prompt} persona={persona} active={active} shaping={shaping && !brief} />
+        ) : brief ? (
+          <BriefReply prompt={prompt} persona={persona} brief={brief} open={docOpen} onOpen={() => onDoc?.()} stream={!settled || mode !== initial} />
         ) : (
           <AnswerView prompt={prompt} persona={persona} stream={!settled || mode !== initial} chartReady={chartReady} chartFailed={chartFailed} onRetryChart={retryChart} onFollowUp={onFollowUp} />
         )}

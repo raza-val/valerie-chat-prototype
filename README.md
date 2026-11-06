@@ -30,6 +30,7 @@ npm run build      # type-check, then build to dist/
 - **A chat.** Each question starts a thread. While Valerie works, the emblem animates beside one line naming the current step; clicking the line opens the step list. The answer then streams in: a headline (lead), then paragraphs, then a chart card when the answer has one. Under it sit copy, thumbs up and down, regenerate, and follow-up chips.
 - **The composer in a thread** is one row (+, text, mic, send). It grows to two rows when the text wraps, up to six lines. Under it, the AI teammate switch sits on the left and the model switch on the right. Switching either mid-chat adds a divider to the thread ("Now tuned for Brie", "Now answering with …").
 - **Controls, top right.** Chats and New chat (+) share one capsule; View traces sits beside them. Both Chats and View traces open a sheet on the right. In Chats, a row can be deleted, with Undo in a toast. View traces is empty from Home; from a chat it lists the reply's steps and tool calls.
+- **Brie's briefs.** Milo (Data Analyst) gets answers in the thread. Brie (Content Strategist) gets a document instead: when her brief is written, the chat steps into a column on the left (480px) and the brief opens in a panel on the right, in one reading column. Drag the handle between them to resize (360px for the chat at least, 520px for the brief; double-click resets; the width is remembered). The panel's toolbar has Save as report and Close. Save as report is a switch: a click turns it into "Saved" with a tick (the label slides, the button eases to its new width, the tick draws in), and another click turns it back. The thread keeps Valerie's line and a card that reopens the document. The brief's text is the live product's, word for word (`src/data/briefs.ts`). Only "Find where Bespoke sits" has a brief so far; Brie's other questions get the usual answer.
 - **Errors.** An answer can stop at a step, with Retry. When the browser is offline, a strip above the composer says so.
 - **Typed questions** are matched to the closest of the five answers. Anything else gets chips to pick one of them.
 
@@ -55,6 +56,11 @@ Each Figma screen and how to open the same state in code (`localhost:5173` or th
 | [14 · Home · Persona picker](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=191-4652) | `/`, then the persona button in the composer |
 | [15 · Answer · AI teammates](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=210-4978) | `/chat/category-talk?state=answer`, then **Milo** under the composer |
 | [16 · Answer · Switch models](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=210-5349) | the same, then the model under the composer |
+| [17 · Brief](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=219-5866) | `/chat/where-bespoke-sits?persona=brie&state=answer` |
+| [18 · Brief · Saved](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=221-6148) | the same, then **Save as report** |
+| [19 · Brief · Resizing](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=221-6505) | the same, dragging the handle between the chat and the brief |
+| [20 · Brief · Closed](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=221-6852) | the same, then **Close** on the brief |
+| [21 · Brief · Full document](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=222-6983) | the same, scrolled through the brief |
 
 These states are in code but have no Figma screen:
 
@@ -63,6 +69,7 @@ These states are in code but have no Figma screen:
 | A live answer, from the first step to the chips | `/chat/category-talk` |
 | The chart fails but the text stays | `/chat/where-bespoke-sits?state=chart-error` |
 | A long thread, with "Jump to latest" | `/chat/category-talk?state=answer&turns=whitespace,hear-the-buyers` |
+| Brie's brief, written live (the panel opens when it's done) | `/chat/where-bespoke-sits?persona=brie` |
 | A chat started as Brie (her steps show no tool calls) | add `persona=brie` |
 | Inside a stand-in of the dashboard (sidebar and breadcrumb) | add `shell=dashboard`, e.g. `/?shell=dashboard` |
 
@@ -102,11 +109,11 @@ The chat ids are `category-talk`, `where-bespoke-sits`, `what-cant-be-measured`,
 
 ```
 src/
-  data/            all copy and numbers: prompts.ts (questions, steps, follow-ups), answers.ts,
+  data/            all copy and numbers: prompts.ts (questions, steps, follow-ups), answers.ts, briefs.ts,
                    charts/ (chart data), traces.ts, personas.ts, ui.ts (interface copy, DRAFT marked)
   pages/           HomePage.tsx, ChatPage.tsx (the thread and its composer)
   components/
-    chat/          Composer, ModelPicker, PersonaPicker, Turn, AnswerView, StepsList, OfflineStrip
+    chat/          Composer, ModelPicker, PersonaPicker, Turn, AnswerView, BriefView (Brie's document), StepsList, OfflineStrip
     charts/        ChartCard (Figma's Market Briefing Card) and the five charts
     drawers/       ChatsDrawer, TracesDrawer
     ui/            Button, Badge, Sheet, Toast

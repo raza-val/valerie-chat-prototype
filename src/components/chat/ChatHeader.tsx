@@ -19,7 +19,7 @@ const ink = 'text-muted-foreground transition-colors hover:text-foreground [&_sv
 const dsIconButton = cn(dsOutline, 'grid w-9 place-items-center')
 
 /** The name of an icon-only button, shown under it on hover (after a beat) or keyboard focus. `end`: hug the right edge. */
-function Tip({ label, end = false, children }: { label: string; end?: boolean; children: ReactNode }) {
+export function Tip({ label, end = false, children }: { label: string; end?: boolean; children: ReactNode }) {
   return (
     <span className="group/tip relative inline-flex">
       {children}

@@ -158,6 +158,10 @@
   --animate-shimmer: shimmer 1.6s linear infinite;
   --animate-breathe: breathe 4.4s ease-in-out infinite;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  /* The document panel slides in beside the chat (main design, 6 Nov). */
+  --animate-panel: panel 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  /* A tick drawing itself in (Save as report → Saved): its path's dash runs out from the start. */
+  --animate-draw: draw 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) 0.06s both;
   --animate-pop: pop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-reveal: reveal 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-tick: tick 0.28s cubic-bezier(0.3, 1.4, 0.5, 1) both;
@@ -206,6 +210,13 @@
 @keyframes form {
   from { opacity: 0; transform: scale(0.82); filter: blur(4px); }
   to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes draw {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes panel {
+  from { opacity: 0; transform: translateX(32px); }
 }
 @keyframes rise {
   from { opacity: 0; transform: translateY(6px); }

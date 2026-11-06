@@ -11,12 +11,13 @@ import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { getPrompt, matchPrompt, prompts, type Prompt } from '@/data/prompts'
 import { personas, type Persona } from '@/data/personas'
-import { threadCopy, unknownCopy, type Model } from '@/data/ui'
+import { briefCopy, threadCopy, unknownCopy, type Model } from '@/data/ui'
 import { useStore } from '@/lib/store'
 import { useOffline } from '@/lib/useOnline'
 import { OfflineStrip } from '@/components/chat/OfflineStrip'
 import { ModelPicker } from '@/components/chat/ModelPicker'
 import { PersonaPicker } from '@/components/chat/PersonaPicker'
+import { BriefPanel, SPLIT, SplitHandle, briefFor } from '@/components/chat/BriefView'
 import { play } from '@/lib/sound'
 import { cn } from '@/lib/cn'
 import { VERSION } from '@/lib/aura'
@@ -63,6 +64,31 @@ function ChatThread() {
   const scroller = useRef<HTMLDivElement>(null)
   const [showJump, setShowJump] = useState(false)
   const [seatHidden, setSeatHidden] = useState(false)
+  // The brief open beside the chat (main design, Brie): the turn it belongs to, or none.
+  const [docKey, setDocKey] = useState<number | null>(null)
+  // Briefs saved as reports, by turn: kept while the panel closes and reopens.
+  const [saved, setSaved] = useState<number[]>([])
+  const docTurn = turns.find((t) => t.key === docKey)
+  const doc = docTurn && briefFor(docTurn.prompt, docTurn.persona)
+  // The split is resizable: the chat's width, kept between its bounds and remembered for this viewer.
+  const root = useRef<HTMLDivElement>(null)
+  const [resizing, setResizing] = useState(false)
+  const fit = useCallback((w: number) => {
+    const total = root.current?.clientWidth ?? 1440
+    return Math.round(Math.max(SPLIT.minChat, Math.min(w, total - SPLIT.gap * 2 - SPLIT.minDoc)))
+  }, [])
+  const [chatWidth, setChatWidth] = useState(() => {
+    try { return Number(localStorage.getItem('valerie-brief-split')) || SPLIT.chat } catch { return SPLIT.chat }
+  })
+  const resize = (w: number) => setChatWidth(fit(w))
+  useEffect(() => {
+    if (!doc) return
+    setChatWidth((w) => fit(w))
+    const onResize = () => setChatWidth((w) => fit(w))
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [!!doc, fit])
+  useEffect(() => { if (!resizing) try { localStorage.setItem('valerie-brief-split', String(chatWidth)) } catch { /* ignore */ } }, [resizing])
 
   // "Jump to latest" shows while the latest turn starts below what the reader can see.
   const checkJump = useCallback(() => {
@@ -103,7 +129,9 @@ function ChatThread() {
   }
 
   return (
-    <div data-canvas className="relative flex h-full flex-col bg-canvas">
+    <div ref={root} data-canvas className={cn('relative flex h-full bg-canvas', resizing && 'cursor-col-resize select-none')}>
+      {/* The chat, full width; while a brief is open it steps into a column on the left and the document takes the rest. */}
+      <div className={cn('relative flex h-full min-w-0 shrink-0 flex-col', !resizing && 'transition-[width] duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]')} style={{ width: doc ? chatWidth : '100%' }}>
       <div ref={scroller} onScroll={checkJump} className="min-h-0 flex-1 overflow-y-auto">
         <ChatHeader title={prompt?.chatTitle ?? 'New chat'} chatId={prompt?.id} />
         <div className={cn('mx-auto flex max-w-[768px] flex-col px-6 pt-4', VERSION === 'main' ? 'pb-40' : 'pb-36')}>
@@ -124,6 +152,8 @@ function ChatThread() {
                     mode={t.mode}
                     onWorking={t === latest ? (w) => { setWorking(w); checkJump() } : undefined}
                     onFollowUp={t === latest ? ask : undefined}
+                    docOpen={t.key === docKey}
+                    onDoc={() => setDocKey(t.key)}
                   />
                 </div>
               </Fragment>
@@ -147,7 +177,7 @@ function ChatThread() {
           {/* No fade above the composer: the thread stays readable right up to it and slips behind it.
               Only the stack from the middle of its first piece down is solid, so nothing shows beneath or between. */}
           <div className="relative before:absolute before:inset-x-0 before:top-7 before:-bottom-6 before:bg-canvas [&>*]:relative">
-            <Composer placeholder="Ask a follow-up…" onSubmit={ask} busy={!!prompt && working} onStop={() => latestRef.current?.stop()} disabled={offline} docked={working && seatHidden} pickModel={VERSION !== 'main'} className="z-10" />
+            <Composer placeholder={doc ? briefCopy.placeholder : 'Ask a follow-up…'} onSubmit={ask} busy={!!prompt && working} onStop={() => latestRef.current?.stop()} disabled={offline} docked={working && seatHidden} pickModel={VERSION !== 'main'} className="z-10" />
             {offline && <OfflineStrip onRetry={reconnect} />}
             {/* Main design (6 Nov): under the box, the persona switch on the left and the model on the right, as Claude does, so
                 neither takes width from the text. Avatar and chevron sit on the 720 text column's edges. Switching either mid-chat
@@ -161,6 +191,13 @@ function ChatThread() {
           </div>
         </div>
       </div>
+      </div>
+      {doc && (
+        <>
+          <SplitHandle at={chatWidth} dragging={resizing} onResize={resize} onDragging={setResizing} onReset={() => resize(SPLIT.chat)} />
+          <BriefPanel key={docKey} brief={doc} left={chatWidth + SPLIT.gap} saved={saved.includes(docKey!)} onSave={() => setSaved((s) => (s.includes(docKey!) ? s.filter((k) => k !== docKey) : [...s, docKey!]))} onClose={() => setDocKey(null)} />
+        </>
+      )}
     </div>
   )
 }

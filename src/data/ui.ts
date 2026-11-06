@@ -33,6 +33,19 @@ export const unknownCopy = {
   lead: 'This prototype has answers for five questions. Pick one to see how Valerie responds:',
 }
 
+/** The content brief beside the chat (main design, 6 Nov). `placeholder` and `save` are the live product's; the rest DRAFT. */
+export const briefCopy = {
+  /** the composer while a brief is open */
+  placeholder: 'Ask for a change — e.g. "break this down by dimension"…',
+  save: 'Save as report',
+  /** the same button once the brief is saved (DRAFT) */
+  saved: 'Saved',
+  /** the close button's name */
+  close: 'Close',
+  /** screen readers only: the handle between the chat and the document */
+  resize: 'Resize the chat and the brief',
+}
+
 /** Long threads. `jump` is from the backlog brief. */
 export const threadCopy = {
   jump: 'Jump to latest',

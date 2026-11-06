@@ -79,6 +79,9 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
     onTyping?.(false)
     if (ref.current) ref.current.style.height = ''
   }
+  // One row and empty: the placeholder is drawn as our own line, so a long one ends in an ellipsis instead of wrapping out of
+  // sight (a textarea's own placeholder can't truncate). It sits in the same grid cell, under the caret, and lets clicks through.
+  const ghost = !two && !text
   const iconBtn = 'grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground'
   return (
     <form
@@ -108,9 +111,11 @@ export function Composer({ placeholder, onSubmit, busy = false, onStop, disabled
           if (!tall) setOpened((o) => !!el.value && (o || el.scrollHeight > 36))
         }}
         onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}
-        placeholder={placeholder}
+        placeholder={ghost ? undefined : placeholder}
+        aria-label={placeholder}
         className={cn('block max-h-[156px] w-full min-w-0 resize-none bg-transparent text-base leading-6 tracking-[-0.01em] outline-none [grid-area:input] placeholder:text-muted-foreground', two ? 'px-2 pt-1.5' : 'px-1 py-1.5')}
       />
+      {ghost && <span aria-hidden className="pointer-events-none min-w-0 self-start truncate px-1 py-1.5 text-base leading-6 tracking-[-0.01em] text-muted-foreground [grid-area:input]">{placeholder}</span>}
       <div className="flex items-center gap-0.5 [grid-area:tools]">
         {pickModel && <ModelPicker below={tall} />}
         <button type="button" onClick={() => toast('Voice input isn’t part of this prototype')} className={iconBtn} aria-label="Voice"><Mic className="size-[18px]" /></button>
