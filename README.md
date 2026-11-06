@@ -1,115 +1,132 @@
-# Valerie · Conversational AI prototype
+# Valerie · Conversational AI
 
-This is a clickable prototype of the Valerie chat for the skincare category and the brand Bespoke. It is built with React, TypeScript, Tailwind and Vite. It runs on your laptop, and you can deploy it as a link for leadership.
+This is a front-end prototype of the **Conversational AI** page in the Valerie dashboard: an AI analyst you can chat with about the skincare category and the brand Bespoke. It shows the approved design.
 
-## Run it on your laptop
+**Figma is the source of truth** for how the page looks: layout, spacing, type, colour and components. **The code shows how it behaves**: what happens on each click, how an answer streams in, the working state, the emblem's motion and the error states. Build the look from Figma, and use the prototype to see the behaviour.
 
-You need Node.js 20 or newer. Check your version by running `node -v` in Terminal.
+There is no backend. The questions, answers, charts and traces are written by hand in `src/data`.
+
+| | Link |
+| --- | --- |
+| Figma screens (source of truth; every state below) | [AI-chat-screen › section 166:41883](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=166-41883) |
+| Live prototype (behaviour) | https://valerie-ai.netlify.app |
+| Figma components used by the screens | [Components frame 173:218](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=173-218) |
+| Answer designs (cards, type, spacing) | [Output 119:41560](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=119-41560) |
+| Design system | Valerie Shadcn (DS Template), the Figma library |
+
+## Run it
+
+You need Node.js 20 or newer.
 
 ```bash
-npm install      # first time only
-npm run dev      # open the http://localhost:5173 link it prints
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # type-check, then build to dist/
 ```
 
-## Main design and archive
+## What the page does
 
-`/` is the main design (since 6 Nov): the Hologram, with the suggested questions under the composer, two to a row. The four versions leadership compared are archived, with the same product and answers but a different Aura (Valerie's character) and Home layout. Every link below works in each one: put its prefix in front of the path. The Valerie logo opens `/archive`, with all four on one page.
+- **Home.** Valerie's emblem sits beside a one-line greeting, with the composer under it and six suggested questions under that, two to a row. Five of them open an answer. "Check the growth numbers" has no answer design yet, so its card shows but can't be picked. The persona (Milo or Brie) and the model are chosen in the composer.
+- **A chat.** Each question starts a thread. While Valerie works, the emblem animates beside one line naming the current step; clicking the line opens the step list. The answer then streams in: a headline (lead), then paragraphs, then a chart card when the answer has one. Under it sit copy, thumbs up and down, regenerate, and follow-up chips.
+- **The composer in a thread** is one row (+, text, mic, send). It grows to two rows when the text wraps, up to six lines. Under it, the disclaimer sits on the left and the model picker on the right.
+- **Controls, top right.** Chats and New chat (+) share one capsule; View traces sits beside them. Both Chats and View traces open a sheet on the right. In Chats, a row can be deleted, with Undo in a toast. View traces is empty from Home; from a chat it lists the reply's steps and tool calls.
+- **Errors.** An answer can stop at a step, with Retry. When the browser is offline, a strip above the composer says so.
+- **Typed questions** are matched to the closest of the five answers. Anything else gets chips to pick one of them.
 
-| Version | Aura | Home | An answer |
-| --- | --- | --- | --- |
-| **Main** | Hologram | `/` (questions in pairs under the composer) | `/chat/hear-the-buyers?state=answer` |
-| **v1** | Solid acrylic: the mark as two thick pieces of clear blue acrylic, in 3D | `/archive/v1/` (questions in pairs under the composer) | `/archive/v1/chat/hear-the-buyers?state=answer` |
-| **v2** | Constellation: the Valerie sparkle drawn in data points | `/archive/v2/` (lens tabs, full questions) | `/archive/v2/chat/hear-the-buyers?state=answer` |
-| **v3** | Mark orb: the white mark on a navy sphere (v1 until 28 Oct) | `/archive/v3/` (questions under the composer) | `/archive/v3/chat/hear-the-buyers?state=answer` |
-| **v4** | Hologram: stacked slices that fan out (preferred) | `/archive/v4/` (questions beside the composer) | `/archive/v4/chat/hear-the-buyers?state=answer` |
+## States: Figma ↔ code
 
-Old links forward: `/v1/…`–`/v4/…` to the archive, `/constellation/…` to archived v2, `/versions` to `/archive`. Links inside each version stay in it. While Valerie works, Aura changes form next to a single shimmering line naming the step; the skeleton shows only in the last moments before the answer. `?state=working` shows that first stage.
+Each Figma screen and how to open the same state in code (`localhost:5173` or the live link):
 
-## Screens and links you can share
-
-| What | URL |
+| Figma screen | In code |
 | --- | --- |
-| Home | `/` |
-| An answer, played live (steps, then answer, then chart) | `/chat/category-talk` |
-| An answer, already finished | `/chat/category-talk?state=answer` |
-| The "working" state, frozen | `/chat/category-talk?state=working` |
-| A long thread (3 answers, "Jump to latest") | `/chat/category-talk?state=answer&turns=whitespace,hear-the-buyers` |
-| An answer that stops at a step (with Retry) | `/chat/category-talk?state=error` |
-| An answer whose chart failed (text kept) | `/chat/where-bespoke-sits?state=chart-error` |
-| Offline strip above the message box | add `offline=1`, e.g. `/chat/hear-the-buyers?state=answer&offline=1` |
-| Any screen inside the dashboard shell | add `shell=dashboard`, e.g. `/?shell=dashboard` |
-| Aura lab: tune the metal by eye, Copy preset into `src/lib/aura.ts` (not linked from the product) | `/lab` |
-| Sound on for this link (the speaker pill turns it on or off; the choice is remembered) | add `sound=1`, e.g. `/?sound=1` |
-| Valerie speaks in another voice (nicky, aaron, martha, arthur, catherine, samantha; Nicky by default). With sound on, Valerie says the tagline on Home, reads each new headline and offers the follow-up; tap Aura to hear it again | add `voice=martha`, e.g. `/?sound=1&voice=martha` |
-| Mascot options for leadership: Version A (Hexagon · Liquid chrome) and Version B (Constellation) next to Cloud · Liquid chrome, Hexagon · Polished chrome and Cloud · Soft, with expressions and the six voices | `/lab?view=character` |
-| Aura docked in the message box (working, scrolled away from the answer) | `/chat/category-talk?state=working&turns=whitespace,hear-the-buyers` |
-| Old blur-in lead, to compare with the two-tone lead | add `lead=blur` to a live answer, e.g. `/chat/hear-the-buyers?lead=blur` |
+| [01 · Home](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=166-41926) | `/` |
+| [02 · Home · Typing](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=175-644) | `/`, then type in the composer |
+| [03 · Chats](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=175-977) | `/`, then **Chats** |
+| [04 · View traces · Empty](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=175-1106) | `/`, then **View traces** |
+| [05 · Working](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=180-1807) | `/chat/category-talk?state=working` |
+| [06 · Working · Steps open](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=180-2370) | the same, then click the step line |
+| [07 · Answer](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=177-1339) | `/chat/category-talk?state=answer` |
+| [08 · Answer · View traces](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=182-3288) | the same, then **View traces** |
+| [09 · Answer · Steps open](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=181-2312) | the same, then click "Analysed …" beside the emblem |
+| [10 · Answer · Full page](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=182-4485) | `/chat/category-talk?state=answer`, scrolled |
+| [11 · Chats · Chat deleted](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=182-3486) | **Chats**, then the bin on a row |
+| [12 · Error · Stopped at a step](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=181-2894) | `/chat/category-talk?state=error` |
+| [13 · Offline](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=182-3886) | `/chat/category-talk?state=answer&offline=1` |
+| [14 · Home · Persona picker](https://www.figma.com/design/LY0YbZF2Egxak797VEtqDG/AI-chat-screen?node-id=191-4652) | `/`, then the persona button in the composer |
 
-The chat ids are:
+These states are in code but have no Figma screen:
 
-- `category-talk`
-- `where-bespoke-sits`
-- `what-cant-be-measured`
-- `whitespace`
-- `growth-numbers`
-- `hear-the-buyers`
+| State | In code |
+| --- | --- |
+| A live answer, from the first step to the chips | `/chat/category-talk` |
+| The chart fails but the text stays | `/chat/where-bespoke-sits?state=chart-error` |
+| A long thread, with "Jump to latest" | `/chat/category-talk?state=answer&turns=whitespace,hear-the-buyers` |
+| A chat started as Brie (her steps show no tool calls) | add `persona=brie` |
+| Inside a stand-in of the dashboard (sidebar and breadcrumb) | add `shell=dashboard`, e.g. `/?shell=dashboard` |
 
-Other things you can try:
+The chat ids are `category-talk`, `where-bespoke-sits`, `what-cant-be-measured`, `whitespace` and `hear-the-buyers`.
 
-- **Typing a question.** It is matched to the closest of the six answers, and the answer is added to the same thread.
-- **Chats** and **View traces** (the pulse icon, top right). These open drawers on the right; the + beside Chats starts a new chat.
-- **Persona picker.** It sits in the message box. Switching persona after an answer adds a divider in the thread. Brie's steps show what Valerie did without the tool calls. To open a chat already tuned for Brie, add `persona=brie`.
-- **Dark mode.** Use the moon button in the header.
+## Developer notes
 
-## For the leadership room
+**Stack.** React 18, TypeScript, Vite, Tailwind CSS v4, React Router 6, Recharts for the charts, lucide-react for the icons.
 
-- **Before/after slides** (16:9, 3840×2160): `docs/aura/slides/`: Home, Answer, Chart, Working, and Home and Answer in dark. The screens they pair are in `docs/aura/before/` and `docs/aura/after/` (1440×900).
-- **Version A vs Version B slides** (16:9, 3840×2160): `docs/aura/slides-ab/`: Home, Answer, Working, Home and Answer in dark, and Aura up close. The screens are in `docs/aura/after/` (A) and `docs/aura/after-b/` (B).
-- **Video backup** (28s, 1920×1200, with Valerie's voice): `docs/aura/valerie-demo.mp4`. One send from Home: the greeting, the flight, working, the headline read aloud as it inks, and the follow-up offer. It plays in QuickTime and Keynote, in case the room's laptop or Wi-Fi misbehaves.
-- **Where the work stands** and what's waiting on a decision: `docs/STATUS.md`.
-- **After a change** (a new voice, an edited headline), re-record and re-render:
-  - `tools/voice/record.sh` records every line in all six voices, or one: `tools/voice/record.sh martha`.
-  - `tools/video/render.sh` renders the video again; `VOICE=martha tools/video/render.sh` for another voice. It takes about 5 minutes and needs Google Chrome and `npm i --no-save playwright-core` once.
+**Design system**
+- Colours come only from the tokens in `src/styles/index.css`, which mirror the Valerie DS: slate neutrals plus the navy Brand secondary scale (`brand-*`). Components don't hard-code hex values. The only exceptions are the chart series colours in `src/data/charts`.
+- Values the DS doesn't have yet sit in the fenced "Beyond the DS" blocks of `index.css`, and each has a row in `docs/DS-DEVIATIONS.md`.
+- `docs/DS-MAPPING.md` maps every element of the page to its DS component.
+- The font is DM Sans only, including in traces (never monospace). Load it with its optical-size axis (`@fontsource-variable/dm-sans/opsz.css`). Figma renders DM Sans that way; without that axis, text sets about 3% wider and lines wrap differently.
+- Red for errors is `--error`: the DS's Semantic/error-border, #dc2626.
+
+**Layout**
+- Desktop first, designed at 1440 wide.
+- Everything in the thread, charts included, sits in a 720px column.
+- The composer is the one exception: 756px wide, with 10px padding on all four sides, so its text and buttons line up with the 720 column's edges.
+- The page has no header bar of its own. In the product it sits inside the dashboard, which already has a sidebar and breadcrumb, so its controls float in the top-right corner.
+
+**The emblem** is the Hologram: a stack of slices in 3D, drawn from the Valerie mark. Its code is in `src/components/exp/Hologram.tsx`, and `src/components/brand/Aura.tsx` renders it with `sequence` on.
+- At rest, a band of light reads down its face now and then.
+- While working, it runs four motions in turn, about 9.6s a round: rotation, orbit, split & snap, flip.
+- On error it greys and shows a red dot.
+
+**Prototype-only behaviour.** Don't carry these over:
+- Every answer takes about 20s, so the working state has time to show.
+- The answers, numbers, charts and traces are illustrative. `docs/DATA.md` lists what changed from the live data.
+- The model names are placeholders, and every model gives the same answer.
+- Copy marked **DRAFT** in `src/data/ui.ts` isn't approved yet.
+
+**Light mode only.** The design has no dark mode. The `.dark` tokens in `index.css` are used only by the archived versions.
 
 ## Where things live
 
 ```
 src/
-  data/                 ← edit text and numbers here (no code knowledge needed)
-    site.ts             dataset stats, tagline, placeholder
-    personas.ts         Milo, Brie
-    prompts.ts          the six questions, steps, footnotes, follow-ups
-    answers.ts          each answer: headline, 3 key figures, paragraphs, lists, quotes, caveat
-    charts/*.ts         numbers behind each chart card
+  data/            all copy and numbers: prompts.ts (questions, steps, follow-ups), answers.ts,
+                   charts/ (chart data), traces.ts, personas.ts, ui.ts (interface copy, DRAFT marked)
+  pages/           HomePage.tsx, ChatPage.tsx (the thread and its composer)
   components/
-    chat/               message box, header, answer, steps, persona picker
-    charts/             the dashboard charts, shown in answers as a simple card (title, chart, legend) in the 720px column
-    drawers/            Chats and Traces drawers
-    layout/AppShell.tsx standalone header, or the dashboard stand-in (?shell=dashboard)
-    brand/              Valerie logo, Aura (the liquid-chrome hexagon with a face; stills and masks in public/aura), Mascot rig
-    ui/                 Button, Badge, Sheet (drawer), Toast
-  styles/index.css      design tokens (colours from the Valerie DS, DM Sans)
-docs/
-  DATA.md               every number we changed from the Figma / live data
-  STATUS.md             what's done, what's waiting on you
-  aura/                 before/after screens and slides, the demo video
-public/voice/           Valerie's recorded lines, one folder per voice
-tools/
-  voice/                records Valerie's lines with the macOS voices
-  video/                renders the demo video frame by frame
+    chat/          Composer, ModelPicker, PersonaPicker, Turn, AnswerView, StepsList, OfflineStrip
+    charts/        ChartCard (Figma's Market Briefing Card) and the five charts
+    drawers/       ChatsDrawer, TracesDrawer
+    ui/            Button, Badge, Sheet, Toast
+    brand/         Aura (renders the emblem), ValerieLogo
+    layout/        AppShell (the standalone frame, or the dashboard stand-in with ?shell=dashboard)
+  lib/             store (persona, model, which sheet is open), useOnline (offline state), motion helpers
+  styles/index.css design tokens
+docs/              DS-MAPPING.md, DS-DEVIATIONS.md, DATA.md
 ```
 
-## Deploy (password protected)
+## Not part of the spec
 
-The site is hosted on Cloudflare Pages (free), and a password page sits in front of it (`functions/_middleware.js`). Step-by-step instructions are in `docs/DEPLOY.md`. In short:
+The repo also holds the design exploration that led here. None of it is part of the approved design, so you can ignore it:
+- `/archive` and `/archive/v1`–`v4`: earlier versions.
+- `/exp`, `/exp/bot`, `/exp/motion` and `/lab`: emblem experiments.
+- The three.js and Paper Shaders packages: used only by those pages.
+- In `src/lib/aura.ts`: `VERSION` is `'main'` at `/`. Code that branches on `VERSION !== 'main'` belongs to the archive.
+
+## Deploy
 
 ```bash
-npm run deploy         # build and upload (the first run asks you to log in to Cloudflare)
-npm run set-password   # set or change the password (one time)
+npm run deploy:netlify   # builds and uploads to https://valerie-ai.netlify.app
 ```
 
-Search engines are blocked with `robots.txt` and a `noindex` meta tag.
-
-## Working with Claude Code
-
-Open this folder in Cursor and start Claude Code. It reads `CLAUDE.md` for the project rules.
+Every file tells search engines not to index it (`robots.txt`, a meta tag, an `X-Robots-Tag` header). For other hosts, see `docs/DEPLOY.md`.

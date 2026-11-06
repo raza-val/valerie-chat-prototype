@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Bell, ChevronDown, ChevronRight, CircleUser, Moon, PanelLeft, Sun } from 'lucide-react'
 import { ValerieLogo } from '@/components/brand/ValerieLogo'
-import { useTheme } from '@/lib/theme'
+import { THEMES, useTheme } from '@/lib/theme'
 import { site } from '@/data/site'
 import { cn } from '@/lib/cn'
 
@@ -18,9 +18,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const right = (
     <div className="flex items-center gap-1">
-      <button onClick={toggle} className="grid size-8 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Toggle theme">
-        {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
-      </button>
+      {THEMES && (
+        <button onClick={toggle} className="grid size-8 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Toggle theme">
+          {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+        </button>
+      )}
       <span className="relative grid size-8 place-items-center rounded-lg text-muted-foreground"><Bell className="size-4" /><span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-amber-200 text-[10px] font-semibold text-amber-800">2</span></span>
       <span className="grid size-8 place-items-center rounded-lg text-muted-foreground"><CircleUser className="size-4" /></span>
     </div>

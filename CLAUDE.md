@@ -10,6 +10,7 @@ This is a clickable prototype of **Valerie**, an AI analyst chat for the skincar
    - `AppShell` only *simulates* the host (`?shell=dashboard`).
 2. **Use colours only from the tokens** in `src/styles/index.css`. These are the Valerie DS: slate neutrals plus the `brand-*` navy scale. Amber `brand-accent` is used only in the logo. Never hard-code a hex in a component, except the chart series colours that live in `src/data/charts`. Anything beyond the DS sits in the fenced "Beyond the DS" blocks of `index.css` (or `src/lib/aura.ts`) and gets a row in `docs/DS-DEVIATIONS.md` first.
    - **Calm canvas.** Home and Chat sit on `--canvas` (grey); white (`--surface`) means "you can touch this" or a card. No borders where tone will do, one filled button per screen.
+   - **Light only** in the main design (6 Nov): no theme toggle, and a stored dark choice is ignored (`THEMES` in `src/lib/theme.ts`). The archive keeps its toggle.
 3. **Use DM Sans only.** Never use monospace, including in traces. It loads with its optical-size axis (`@fontsource-variable/dm-sans/opsz.css`, 6 Nov), which is how Figma's DS renders it: the wght-only file set type about 3% wider, so headlines wrapped differently from Figma.
 4. **Answers follow the Figma answer designs exactly** (AI-chat-screen, "Output" 119:41560, R1–R4 and R6; 27 Oct). They are the reference another developer builds from: copy their cards, type and spacing, take no other inspiration. Chart cards are Figma's "Market Briefing Card" (`charts/ChartCard.tsx`): slate/50 ground, 24px corners and padding, a title (and subtitle), a white slot inside. Two exceptions the user chose: no eyebrow and no card buttons (Deep, pin, explain, About this card), and the answer ends the prototype's own quiet way (items 5–7), not Figma's footnote, lens tag, View trace / Regenerate / Pin insight row and offer bubble. Figma's figures are swapped for the prototype's illustrative ones (docs/DATA.md); its wording is kept word for word.
 5. **Don't invent copy.** Every visible word comes from the live product or `src/data`. Avoid helper text or filler labels.
@@ -120,5 +121,6 @@ Notes:
 
 File `LY0YbZF2Egxak797VEtqDG` (AI-chat-screen):
 
+- **The main design's screens** (section 166:41883, 14 states, components in 173:218) are the developer's source of truth for the look; the prototype shows the behaviour (6 Nov, README). Don't list Figma-vs-code differences for the developer.
 - "Stage 2 v3 · Chat content" (node 85:36103) is the wireframe.
 - "Chart Set #1" (58:20661) and "Chart set #2" (58:8024) are the chart originals.
